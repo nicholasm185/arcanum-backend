@@ -1,6 +1,10 @@
 var mongoose = require('mongoose');
 
 var schema = new mongoose.Schema({
+    username:{
+        type: String,
+        required: true
+    },
     gameId:{
         type: String
     },
@@ -22,16 +26,16 @@ var schema = new mongoose.Schema({
         default: 0
     },
     hand:{
-        type: String,
-        default: ''
+        type: [String],
+        default: []
     },
     deck_spell:{
-        type: String,
-        default: ''
+        type: [String],
+        default: []
     },
     deck_element:{
-        type: String,
-        default: ''
+        type: [String],
+        default: []
     },
     burn:{
         type: Number,

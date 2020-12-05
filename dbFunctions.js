@@ -1,4 +1,5 @@
 var Game = require('./Models/game')
+var Player = require('./Models/player')
 
 async function createGame(p1, p2, gamestate){
     const newGame = new Game({
@@ -34,6 +35,20 @@ async function getGame(gameID){
     return result;
 };
 
+async function createPlayer(username) {
+    const newPlayer = new Player({
+        username: username,
+        gameID: "test",
+        hand: ["a","b","c"]
+    });
+    const newPlayerID = await newPlayer.save();
+    console.log("returned: " + newPlayerID);
+    // const result = await Game.findOne({_id: newPlayerID._id});
+    // console.log(result);
+    return newPlayerID;
+}
+
 exports.createGame = createGame;
 exports.getGame = getGame;
 exports.updateGameTurn = updateGameTurn;
+exports.createPlayer = createPlayer;

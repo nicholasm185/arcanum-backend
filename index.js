@@ -22,7 +22,7 @@ io.on('connection', function(socket) {
         sockets[thisPlayerID] = socket;
 
         socket.emit('register', {id: thisPlayerID})
-        socket.broadcast.emit('hello', {msg: 'im here fuckassssss'})
+        socket.broadcast.emit('hello', {msg: 'im here'})
 
         console.log('number of players connected: ' + Object.keys(players).length);
 
@@ -30,10 +30,14 @@ io.on('connection', function(socket) {
 
         for(var playerID in players){
             if(playerID != thisPlayerID){
-                socket.emit('spawn', players[playerID])
-            }
-        }
+                socket.emit('spawn', players[playerID]);
+            };
+        };
 
+        socket.on('username', function(e){
+            console.log('received name: '+ e.name);
+            player.playerName = e.name;
+        })
 
         socket.on('disconnect', function(){
             console.log('connection lost');
@@ -41,14 +45,18 @@ io.on('connection', function(socket) {
             delete sockets[thisPlayerID];
         })
 
+        socket.on('yeet', function(e){
+            console.log(e.yeet);
+        })
+
         if(Object.keys(players).length == 2){
             console.log("game ready to start");
             mainGameLoop(players, sockets);
-        }
+        };
     } 
     else{
         socket.emit('ERR_servFull', {status: "error",msg: 'server is full', curNumPlayers: Object.keys(players).length});
-        console.log('connection attempted but server is full')
+        console.log('connection attempted but server is full');
         socket.disconnect();
     };
     
@@ -59,28 +67,3 @@ function mainGameLoop(players, sockets){
     console.log(players);
     console.log(sockets);
 };
-
-
-// var dbHelper = require('./mongoHelper')
-// var Game = require('./Models/game')
-// var dbFunc = require('./dbFunctions')
-
-// create new entry and find the entry right away
-// dbFunc.createGame("this is a", "new entry", true).then(function(result){
-//     console.log(result._id);
-//     dbFunc.getGame(result._id).then(function(result){
-//         console.log(result);
-//     }).catch(function(){
-//         console.log("borked at 2");
-//     });
-// }).catch(function(){
-//     console.log("borked at 1");
-// });
-
-// update and then print results
-// dbFunc.updateGameTurn("5fcb58895018b05008aabcf6", 30).then(function(result){
-//     console.log(result);
-//     dbFunc.getGame(result._id).then(function(result){
-//         console.log(result);
-//     });
-// });
