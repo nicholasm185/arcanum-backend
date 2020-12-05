@@ -1,18 +1,21 @@
-const { MongoClient } = require('mongodb');
-/**
- * Print the names of all available databases
- * @param {MongoClient} client A MongoClient that is connected to a cluster
- */
-async function listDatabases(client) {
-    databasesList = await client.db().admin().listDatabases();
+var mongoose = require('mongoose');
 
-    console.log("Databases:");
-    databasesList.databases.forEach(db => console.log(` - ${db.name}`));
-};
+var URL = "mongodb+srv://root:DeeZnkKwn03Z3qhb@cluster0.rbt3t.mongodb.net/arcanum?retryWrites=true&w=majority";
 
-async function find(client){
-    const cursor = client.collection('records').find()
-    console.log(cursor);
-}
+// mongoose.set('useCreateIndex', true);
+// mongoose.set('useFindAndModify', false);
 
-module.exports = { listDatabases };
+mongoose.connect(URL, {
+    useNewUrlParser: true,
+    useCreateIndex: true
+});
+
+var db = mongoose.connection;
+
+db.on('error', () => {
+    console.log("error occured in db");
+});
+
+db.on('open', () => {
+    console.log("db connection made successfully");
+});
