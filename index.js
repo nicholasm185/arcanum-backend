@@ -54,33 +54,41 @@ io.on('connection', function(socket) {
 
 function mainGameLoop(players, sockets){
     var turn = Math.floor(Math.random());
-    console.log("welcome to the jungleeee where idk fauclake");
+    console.log("Game commencing; get ready!");
     var IDs = Object.keys(sockets);
-    p1 = sockets[IDs[0]];
-    p2 = sockets[IDs[1]];
+    p1 = players[IDs[0]];
+    p2 = players[IDs[1]];
+    p1S = sockets[IDs[0]];
+    p2S = sockets[IDs[1]];
     console.log('turn: ' + turn)
     console.log('player 1: ' + p1);
     console.log('player 2: ' + p2);
 
-    p1.on('yeet', function(e){
+    p1S.on('yeet', function(e){
         if(turn == 0){
             console.log("player 1 yeeted");
             turn = 1;
+            p2.doDamage(1);
+            p1S.emit('Board:State', {you: p1, enemy: p2});
+            p2S.emit('Board:State', {you: p2, enemy: p1});
         }
         else{
             console.log('p1 tried to yeet when its not their turn');
-            p1.emit('WARN_turn', {msg: "it's not your turn"})
+            p1S.emit('WARN_turn', {msg: "it's not your turn"})
         }
     });
 
-    p2.on('yeet', function(e){
+    p2S.on('yeet', function(e){
         if(turn == 1){
             console.log("player 2 yeeted");
             turn = 0;
+            p1.doDamage(1);
+            p1S.emit('Board:State', {you: p2, enemy: p1});
+            p2S.emit('Board:State', {you: p1, enemy: p2});
         }
         else{
             console.log('p2 tried to yeet when its not their turn');
-            p2.emit('WARN_turn', {msg: "it's not your turn"});
+            p2S.emit('WARN_turn', {msg: "it's not your turn"});
         }
     });
     // p1.emit('playerInfo', {player: 1});

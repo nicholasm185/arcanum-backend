@@ -18,7 +18,7 @@ module.exports = class Player{
     }
 
     doDamage(damage) {
-        this.health += damage;
+        this.health -= damage;
     }
 
     updateEarth(num){
