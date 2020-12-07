@@ -26,13 +26,7 @@ io.on('connection', function(socket) {
 
         console.log('number of players connected: ' + Object.keys(players).length);
 
-        socket.broadcast.emit('spawn', player);
 
-        for(var playerID in players){
-            if(playerID != thisPlayerID){
-                socket.emit('spawn', players[playerID]);
-            };
-        };
 
         socket.on('username', function(e){
             console.log('received name: '+ e.name);
@@ -43,10 +37,6 @@ io.on('connection', function(socket) {
             console.log('connection lost');
             delete players[thisPlayerID];
             delete sockets[thisPlayerID];
-        })
-
-        socket.on('yeet', function(e){
-            console.log(e.yeet);
         })
 
         if(Object.keys(players).length == 2){
@@ -63,7 +53,39 @@ io.on('connection', function(socket) {
 });
 
 function mainGameLoop(players, sockets){
+    var turn = Math.floor(Math.random());
     console.log("welcome to the jungleeee where idk fauclake");
-    console.log(players);
-    console.log(sockets);
+    var IDs = Object.keys(sockets);
+    p1 = sockets[IDs[0]];
+    p2 = sockets[IDs[1]];
+    console.log('turn: ' + turn)
+    console.log('player 1: ' + p1);
+    console.log('player 2: ' + p2);
+
+    p1.on('yeet', function(e){
+        if(turn == 0){
+            console.log("player 1 yeeted");
+            turn = 1;
+        }
+        else{
+            console.log('p1 tried to yeet when its not their turn');
+            p1.emit('WARN_turn', {msg: "it's not your turn"})
+        }
+    });
+
+    p2.on('yeet', function(e){
+        if(turn == 1){
+            console.log("player 2 yeeted");
+            turn = 0;
+        }
+        else{
+            console.log('p2 tried to yeet when its not their turn');
+            p2.emit('WARN_turn', {msg: "it's not your turn"});
+        }
+    });
+    // p1.emit('playerInfo', {player: 1});
+    // p2.emit('playerInfo', {player: 2});
+    
+    
 };
+
