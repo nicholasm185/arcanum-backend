@@ -4,7 +4,7 @@ module.exports = class Player{
     constructor(){
         this.playerName = '';
         this.playerID = shortID.generate();
-        this.health = 30;
+        this.health = 5;
         this.earth = 0;
         this.fire = 0;
         this.water = 0;
