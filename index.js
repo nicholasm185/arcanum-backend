@@ -1,5 +1,5 @@
 // third party imports
-var io = require('socket.io')(process.env.PORT || 52300);
+var io = require('socket.io')(process.env.PORT || 8080);
 
 
 // local imports
