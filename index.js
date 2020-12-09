@@ -73,8 +73,8 @@ function mainGameLoop(players, sockets){
     p2S.emit('playerNumber', {you: 2});
 
     // tell the current turn to all players
-    p1s.emit('curTurn', {curTurn: turn});
-    p2s.emit('curTurn', {curTurn: turn});
+    p1S.emit('curTurn', {curTurn: turn});
+    p2S.emit('curTurn', {curTurn: turn});
     
     console.log('turn: ' + turn)
     console.log('player 1: ' + p1);
