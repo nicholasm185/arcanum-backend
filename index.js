@@ -59,7 +59,7 @@ function randomizeCard(){
 function mainGameLoop(players, sockets){
     // get randomized turn
     var turn = Math.round(Math.random()) + 1;
-    var winner = 0;
+    var phase = 0;
     console.log("Game commencing; get ready!");
 
     // get player objects from players
@@ -88,7 +88,7 @@ function mainGameLoop(players, sockets){
             console.log("player 1 yeeted");
             turn = 2;
             p2.doDamage(1);
-            updateBoard(p1, p2, p1S, p2S);
+            sendBoard(p1, p2, p1S, p2S);
             if(checkWin(p1, p2, p1S, p2S)){
                 p1S.disconnect();
                 p2S.disconnect();
@@ -109,7 +109,7 @@ function mainGameLoop(players, sockets){
             console.log("player 2 yeeted");
             turn = 1;
             p1.doDamage(1);
-            updateBoard(p1, p2, p1S, p2S);
+            sendBoard(p1, p2, p1S, p2S);
             if(checkWin(p1, p2, p1S, p2S)){
                 p1S.disconnect();
                 p2S.disconnect();
@@ -142,7 +142,7 @@ function mainGameLoop(players, sockets){
     
 };
 
-function updateBoard(p1, p2, p1S, p2S){
+function sendBoard(p1, p2, p1S, p2S){
     var p1c, p1e, p2c, p2e;
     p1c = JSON.parse(JSON.stringify(p1));
     p1e = JSON.parse(JSON.stringify(p1));
