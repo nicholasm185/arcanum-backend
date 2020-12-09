@@ -59,6 +59,7 @@ function randomizeCard(){
 function mainGameLoop(players, sockets){
     // get randomized turn
     var turn = Math.round(Math.random()) + 1;
+    var winner = 0;
     console.log("Game commencing; get ready!");
 
     // get player objects from players
@@ -126,13 +127,17 @@ function mainGameLoop(players, sockets){
     });
     
     p1S.on('disconnect', function(){
-        p2S.emit('winner', {winner: 2})
+        if(!checkWin(p1, p2, p1S, p2S)){
+            p2S.emit('winner', {winner: 2});
+        }
         p2S.disconnect();
         cleanup(players, sockets);
     })
 
     p2S.on('disconnect', function(){
-        p1S.emit('winner', {winner: 1})
+        if(!checkWin(p1, p2, p1S, p2S)){
+            p1S.emit('winner', {winner: 1});
+        }
         p1S.disconnect();
         cleanup(players, sockets);
     })
