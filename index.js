@@ -126,6 +126,17 @@ function mainGameLoop(players, sockets){
         }
     });
     
+    p1S.on('disconnect', function(){
+        p2S.emit("winner", {winner: 2})
+        p2S.disconnect();
+        cleanup(players, sockets);
+    })
+
+    p2S.on('disconnect', function(){
+        p1S.emit("winner", {winner: 1})
+        p1S.disconnect();
+        cleanup(players, sockets);
+    })
     
 };
 
@@ -146,13 +157,13 @@ function announceEnd(p1S, p2S, winner){
 
 function checkWin(p1, p2, p1S, p2S){
     if (p1['health'] <= 0){
-        p1S.emit("winner", {winner: 1})
-        p2S.emit("winner", {winner: 1})
+        p1S.emit("winner", {winner: 2})
+        p2S.emit("winner", {winner: 2})
         return 1;
     }
     if (p2['health'] <= 0){
-        p1S.emit("winner", {winner: 2})
-        p2S.emit("winner", {winner: 2})
+        p1S.emit("winner", {winner: 1})
+        p2S.emit("winner", {winner: 1})
         return 1;
     }
     return 0;
