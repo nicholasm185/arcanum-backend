@@ -63,6 +63,7 @@ function mainGameLoop(players, sockets){
 
     // get player objects from players
     var IDs = Object.keys(sockets);
+    console.log(IDs);
     p1 = players[IDs[0]];
     p2 = players[IDs[1]];
 
@@ -108,8 +109,8 @@ function mainGameLoop(players, sockets){
             console.log("player 2 yeeted");
             turn = 1;
             p1.doDamage(1);
-            p1S.emit('Board:State', {you: p2, enemy: p1});
-            p2S.emit('Board:State', {you: p1, enemy: p2});
+            p1S.emit('Board:State', {you: p1, enemy: p2});
+            p2S.emit('Board:State', {you: p2, enemy: p1});
             checkWin(p1, p2, p1S, p2S)
             if(checkWin(p1, p2, p1S, p2S)){
                 p1S.disconnect();
