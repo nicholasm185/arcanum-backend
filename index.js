@@ -52,22 +52,39 @@ io.on('connection', function(socket) {
     
 });
 
+function randomizeCard(){
+
+};
+
 function mainGameLoop(players, sockets){
-    var turn = Math.floor(Math.random());
+    // get randomized turn
+    var turn = Math.round(Math.random()) + 1;
     console.log("Game commencing; get ready!");
+
+    // get player objects from players
     var IDs = Object.keys(sockets);
     p1 = players[IDs[0]];
     p2 = players[IDs[1]];
+
+    // get each player's sockets from sockets, telling their turn number
     p1S = sockets[IDs[0]];
+    p1S.emit('playerNumber', {you: 1});
     p2S = sockets[IDs[1]];
+    p2S.emit('playerNumber', {you: 2});
+
+    // tell the current turn to all players
+    p1s.emit('curTurn', {curTurn: turn});
+    p2s.emit('curTurn', {curTurn: turn});
+    
     console.log('turn: ' + turn)
     console.log('player 1: ' + p1);
     console.log('player 2: ' + p2);
 
+    // test function for both players
     p1S.on('yeet', function(e){
-        if(turn == 0){
+        if(turn == 1){
             console.log("player 1 yeeted");
-            turn = 1;
+            turn = 2;
             p2.doDamage(1);
             p1S.emit('Board:State', {you: p1, enemy: p2});
             p2S.emit('Board:State', {you: p2, enemy: p1});
@@ -79,9 +96,9 @@ function mainGameLoop(players, sockets){
     });
 
     p2S.on('yeet', function(e){
-        if(turn == 1){
+        if(turn == 2){
             console.log("player 2 yeeted");
-            turn = 0;
+            turn = 1;
             p1.doDamage(1);
             p1S.emit('Board:State', {you: p2, enemy: p1});
             p2S.emit('Board:State', {you: p1, enemy: p2});
@@ -91,8 +108,6 @@ function mainGameLoop(players, sockets){
             p2S.emit('WARN_turn', {msg: "it's not your turn"});
         }
     });
-    // p1.emit('playerInfo', {player: 1});
-    // p2.emit('playerInfo', {player: 2});
     
     
 };
