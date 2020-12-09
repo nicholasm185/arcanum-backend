@@ -88,8 +88,7 @@ function mainGameLoop(players, sockets){
             console.log("player 1 yeeted");
             turn = 2;
             p2.doDamage(1);
-            p1S.emit('Board:State', {you: p1, enemy: p2});
-            p2S.emit('Board:State', {you: p2, enemy: p1});
+            updateBoard(p1, p2, p1S, p2S);
             if(checkWin(p1, p2, p1S, p2S)){
                 p1S.disconnect();
                 p2S.disconnect();
@@ -110,8 +109,7 @@ function mainGameLoop(players, sockets){
             console.log("player 2 yeeted");
             turn = 1;
             p1.doDamage(1);
-            p1S.emit('Board:State', {you: p1, enemy: p2});
-            p2S.emit('Board:State', {you: p2, enemy: p1});
+            updateBoard(p1, p2, p1S, p2S);
             if(checkWin(p1, p2, p1S, p2S)){
                 p1S.disconnect();
                 p2S.disconnect();
@@ -144,6 +142,19 @@ function mainGameLoop(players, sockets){
     
 };
 
+function updateBoard(p1, p2, p1S, p2S){
+    var p1c, p1e, p2c, p2e;
+    p1c = JSON.parse(JSON.stringify(p1));
+    p1e = JSON.parse(JSON.stringify(p1));
+    p2c = JSON.parse(JSON.stringify(p2));
+    p2e = JSON.parse(JSON.stringify(p2));
+    p1c['deck_spell'] = p2c['deck_spell'] = p1e['deck_spell'] = p2e['deck_spell'] = [];
+    p1e['hand'] = p1['hand'].length;
+    p2e['hand'] = p2['hand'].length;
+    p1S.emit('Board:State', {you: p1c, enemy: p2e});
+    p2S.emit('Board:State', {you: p2c, enemy: p1e});
+}
+
 function cleanup(players, sockets){
     var IDs = Object.keys(players);
     for(var i = 0; i < players.IDs; i++){
@@ -151,13 +162,6 @@ function cleanup(players, sockets){
         delete sockets[IDs[i]];
     }
 }
-
-// function announceEnd(p1S, p2S, winner){
-//     p1S.emit('gameEnd', {winner: winner});
-//     p2S.emit('gameEnd', {winner: winner});
-//     p1S.disconnect();
-//     p2S.disconnect();
-// };
 
 function checkWin(p1, p2, p1S, p2S){
     if (p1['health'] <= 0){
