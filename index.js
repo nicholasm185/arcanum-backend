@@ -98,6 +98,13 @@ function mainGameLoop(players, sockets){
     p2S = sockets[IDs[1]];
     p2S.emit('playerNumber', {you: 2});
 
+    // Testing hand
+    p1['hand'] = [1,1,1,1,1,1];
+    p2['hand'] = [1,1,1,1,1,1];
+
+    // Send the first state of board
+    sendBoard(p1, p2, p1S, p2S);
+
     // tell the current turn to all players
     p1S.emit('curTurn', {curTurn: turn});
     p2S.emit('curTurn', {curTurn: turn});
@@ -113,6 +120,7 @@ function mainGameLoop(players, sockets){
             turn = 2;
             turnNum ++;
             p2.doDamage(1);
+            sendTurn(p1S, p2S, turn);
             sendBoard(p1, p2, p1S, p2S);
             if(checkWin(p1, p2, p1S, p2S)){
                 p1S.disconnect();
@@ -135,6 +143,7 @@ function mainGameLoop(players, sockets){
             turn = 1;
             turnNum ++;
             p1.doDamage(1);
+            sendTurn(p1S, p2S, turn);
             sendBoard(p1, p2, p1S, p2S);
             if(checkWin(p1, p2, p1S, p2S)){
                 p1S.disconnect();
@@ -168,6 +177,11 @@ function mainGameLoop(players, sockets){
     
 };
 
+function sendTurn(p1S, p2S, curTurn){
+    p1S.emit('curTurn', {curTurn: curTurn});
+    p2S.emit('curTurn', {curTurn: curTurn});
+}
+
 function sendBoard(p1, p2, p1S, p2S){
     var p1c, p1e, p2c, p2e;
     p1c = JSON.parse(JSON.stringify(p1));
@@ -175,8 +189,9 @@ function sendBoard(p1, p2, p1S, p2S){
     p2c = JSON.parse(JSON.stringify(p2));
     p2e = JSON.parse(JSON.stringify(p2));
     p1c['deck_spell'] = p2c['deck_spell'] = p1e['deck_spell'] = p2e['deck_spell'] = [];
-    p1e['hand'] = p1['hand'].length;
-    p2e['hand'] = p2['hand'].length;
+    p1c['deck_element'] = p2c['deck_element'] = p1e['deck_element'] = p2e['deck_element'] = [];
+    p1e['hand'] = [p1['hand'].length];
+    p2e['hand'] = [p2['hand'].length];
     p1S.emit('Board:State', {you: p1c, enemy: p2e});
     p2S.emit('Board:State', {you: p2c, enemy: p1e});
 }
