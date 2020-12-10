@@ -33,5 +33,25 @@ module.exports = class Player{
         this.water += num;
     }
 
+    drawSpell(){
+        this.hand.push(this.deck_spell.pop())
+    }
+
+    drawElement(){
+        const drawn = this.deck_element.pop()
+        switch (drawn) {
+            case 1:
+                this.earth ++;
+                break;
+            case 2:
+                this.fire ++;
+                break
+            case 3:
+                this.water ++;
+                break
+            default:
+                break;
+        }
+    }
 
 }

@@ -4,9 +4,23 @@ var io = require('socket.io')(process.env.PORT || 8080);
 
 // local imports
 var Player = require('./Classes/player');
+var dbHelper = require('./mongoHelper');
+var dbFunc = require('./dbFunctions')
 
 var players = [];
 var sockets = [];
+
+var cards;
+var cardIDs;
+dbFunc.getCards().then(function(results){
+    cards = results;
+    cardIDs = cards.map(function(card){
+        return card["cardNo"];
+    });
+    console.log("got cards")
+    console.log(cardIDs);
+});
+
 
 
 console.log('server starting');
@@ -59,6 +73,7 @@ function randomizeCard(){
 function mainGameLoop(players, sockets){
     // get randomized turn
     var turn = Math.round(Math.random()) + 1;
+    var turnNum = 1;
     var phase = 0;
     console.log("Game commencing; get ready!");
 
@@ -67,6 +82,15 @@ function mainGameLoop(players, sockets){
     console.log(IDs);
     p1 = players[IDs[0]];
     p2 = players[IDs[1]];
+
+    // set the random decks
+    p1['deck_spell'] = randomDeck(cardIDs);
+    p1['deck_element'] = randomElement();
+    p2['deck_spell'] = randomDeck(cardIDs);
+    p2['deck_element'] = randomElement();
+
+    console.log(p1);
+    console.log(p2);
 
     // get each player's sockets from sockets, telling their turn number
     p1S = sockets[IDs[0]];
@@ -87,6 +111,7 @@ function mainGameLoop(players, sockets){
         if(turn == 1){
             console.log("player 1 yeeted");
             turn = 2;
+            turnNum ++;
             p2.doDamage(1);
             sendBoard(p1, p2, p1S, p2S);
             if(checkWin(p1, p2, p1S, p2S)){
@@ -108,6 +133,7 @@ function mainGameLoop(players, sockets){
         if(turn == 2){
             console.log("player 2 yeeted");
             turn = 1;
+            turnNum ++;
             p1.doDamage(1);
             sendBoard(p1, p2, p1S, p2S);
             if(checkWin(p1, p2, p1S, p2S)){
@@ -175,4 +201,34 @@ function checkWin(p1, p2, p1S, p2S){
         return 1;
     }
     return 0;
+}
+
+function shuffle(array) {
+    var i = array.length,
+        j = 0,
+        temp;
+    while (i--) {
+        j = Math.floor(Math.random() * (i+1));
+        temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+    return array;
+}
+
+function randomDeck(cardIDs){
+    const p1 = shuffle(cardIDs);
+    const p2 = shuffle(cardIDs)
+    return p1.concat(p2);
+}
+
+function randomElement(){
+    const pool = [1,1,1,1,1,1,1,1,1,1,
+                2,2,2,2,2,2,2,2,2,2,
+                3,3,3,3,3,3,3,3,3,3]
+    return shuffle(pool);
+}
+
+function drawCard(player){
+    player['hand'].push(player['deck_spell'].pop())
 }

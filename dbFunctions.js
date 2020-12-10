@@ -1,5 +1,6 @@
-var Game = require('./Models/game')
-var Player = require('./Models/player')
+var Game = require('./Models/game');
+var Player = require('./Models/player');
+var Card = require('./Models/card');
 
 async function createGame(p1, p2, gamestate){
     const newGame = new Game({
@@ -48,7 +49,17 @@ async function createPlayer(username) {
     return newPlayerID;
 }
 
+async function getCards(){
+    const result = await Card.find();
+    if(result == null){
+        console.log("cards not found");
+    }
+    // console.log(result);
+    return result
+}
+
 exports.createGame = createGame;
 exports.getGame = getGame;
 exports.updateGameTurn = updateGameTurn;
 exports.createPlayer = createPlayer;
+exports.getCards = getCards;
