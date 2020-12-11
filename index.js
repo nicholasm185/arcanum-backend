@@ -5,7 +5,8 @@ var io = require('socket.io')(process.env.PORT || 8080);
 // local imports
 var Player = require('./Classes/player');
 var dbHelper = require('./mongoHelper');
-var dbFunc = require('./dbFunctions')
+var dbFunc = require('./dbFunctions');
+const game = require('./Models/game');
 
 var players = [];
 var sockets = [];
@@ -21,7 +22,8 @@ dbFunc.getCards().then(function(results){
     console.log(cardIDs);
 });
 
-
+// poo poo workaround for "open" socket.io event emitted twice by unity
+var gameRunning = false;
 
 console.log('server starting');
 io.on('connection', function(socket) {
@@ -40,11 +42,14 @@ io.on('connection', function(socket) {
 
         console.log('number of players connected: ' + Object.keys(players).length);
 
-
-
         socket.on('username', function(e){
             console.log('received name: '+ e.name);
             player.playerName = e.name;
+            if(Object.keys(players).length == 2 && !gameRunning){
+                console.log("game ready to start");
+                gameRunning = true;
+                mainGameLoop(players, sockets);
+            };
         })
 
         socket.on('disconnect', function(){
@@ -52,11 +57,7 @@ io.on('connection', function(socket) {
             delete players[thisPlayerID];
             delete sockets[thisPlayerID];
         })
-
-        if(Object.keys(players).length == 2){
-            console.log("game ready to start");
-            mainGameLoop(players, sockets);
-        };
+        
     } 
     else{
         socket.emit('ERR_servFull', {status: "error",msg: 'server is full', curNumPlayers: Object.keys(players).length});
@@ -89,18 +90,19 @@ function mainGameLoop(players, sockets){
     p2['deck_spell'] = randomDeck(cardIDs);
     p2['deck_element'] = randomElement();
 
-    console.log(p1);
-    console.log(p2);
-
     // get each player's sockets from sockets, telling their turn number
     p1S = sockets[IDs[0]];
     p1S.emit('playerNumber', {you: 1});
     p2S = sockets[IDs[1]];
     p2S.emit('playerNumber', {you: 2});
 
-    // Testing hand
-    p1['hand'] = [1,1,1,1,1,1];
-    p2['hand'] = [1,1,1,1,1,1];
+    // // Testing hand
+    // p1['hand'] = [1,1,1,1,1,1];
+    // p2['hand'] = [1,1,1,1,1,1];
+
+    // Generate Hand
+    p1.drawSpell(5);
+    p2.drawSpell(5);
 
     // Send the first state of board
     sendBoard(p1, p2, p1S, p2S);
@@ -108,10 +110,10 @@ function mainGameLoop(players, sockets){
     // tell the current turn to all players
     p1S.emit('curTurn', {curTurn: turn});
     p2S.emit('curTurn', {curTurn: turn});
-    
-    console.log('turn: ' + turn)
-    console.log('player 1: ' + p1);
-    console.log('player 2: ' + p2);
+
+    dbFunc.createGame(p1, p2, true, turn, ((turn == 1) ? [1,2] : [2,1])).then(function(result){
+        console.log(result);
+    });
 
     // test function for both players
     p1S.on('yeet', function(e){
@@ -127,6 +129,7 @@ function mainGameLoop(players, sockets){
                 p2S.disconnect();
                 cleanup(players, sockets);
                 console.log('game finished');
+                gameRunning = false;
                 return;
             }
 
@@ -150,6 +153,7 @@ function mainGameLoop(players, sockets){
                 p2S.disconnect();
                 cleanup(players, sockets);
                 console.log('game finished');
+                gameRunning = false;
                 return;
             }
         }

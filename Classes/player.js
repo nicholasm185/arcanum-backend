@@ -4,7 +4,7 @@ module.exports = class Player{
     constructor(){
         this.playerName = '';
         this.playerID = shortID.generate();
-        this.health = 5;
+        this.health = 30;
         this.earth = 0;
         this.fire = 0;
         this.water = 0;
@@ -33,25 +33,30 @@ module.exports = class Player{
         this.water += num;
     }
 
-    drawSpell(){
-        this.hand.push(this.deck_spell.pop())
+    drawSpell(n){
+        for(var i = 0; i < n; i++){
+            this.hand.push(this.deck_spell.pop());
+        };
     }
 
-    drawElement(){
-        const drawn = this.deck_element.pop()
-        switch (drawn) {
-            case 1:
-                this.earth ++;
-                break;
-            case 2:
-                this.fire ++;
-                break
-            case 3:
-                this.water ++;
-                break
-            default:
-                break;
-        }
+    drawElement(n){
+        for(var i = 0; i < n; i++){
+            const drawn = this.deck_element.pop()
+            switch (drawn) {
+                case 1:
+                    this.earth ++;
+                    break;
+                case 2:
+                    this.fire ++;
+                    break
+                case 3:
+                    this.water ++;
+                    break
+                default:
+                    break;
+            }
+        };
     }
+    
 
 }

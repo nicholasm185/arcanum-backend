@@ -2,17 +2,19 @@ var Game = require('./Models/game');
 var Player = require('./Models/player');
 var Card = require('./Models/card');
 
-async function createGame(p1, p2, gamestate){
+async function createGame(p1, p2, gamestate, cur_turn, playerOrder){
     const newGame = new Game({
         p1: p1,
         p2: p2,
-        gamestate: gamestate
+        gamestate: gamestate,
+        cur_turn: cur_turn,
+        playerOrder, playerOrder
     });
-    const newGameID = await newGame.save();
+    const result = await newGame.save();
     // console.log("returned: " + newGameID._id);
     // const result = await Game.findOne({_id: newGameID._id});
     // console.log(result);
-    return newGameID;
+    return result;
 };
 
 async function updateGameTurn(gameID, curTurn){

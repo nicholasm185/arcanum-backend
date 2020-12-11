@@ -67,16 +67,31 @@ function randomElement(){
     return shuffle(pool);
 }
 
+var turn = 2;
 var p1 = new Player();
+var p2 = new Player();
 p1['deck_spell'] = randomDeck(cardIDs);
 p1['deck_element'] = randomElement();
-console.log(p1);
-p1.drawSpell();
-p1.drawSpell();
-p1.drawSpell();
-p1.drawSpell();
-p1.drawElement();
-console.log(p1);
+p2['deck_spell'] = randomDeck(cardIDs);
+p2['deck_element'] = randomElement();
+
+p1.drawSpell(5);
+p2.drawSpell(5);
+
+dbFunc.createGame(p1, p2, true, turn, ((turn == 1) ? [1,2] : [2,1])).then(function(result){
+    console.log(result._id);
+    dbFunc.getGame(result._id).then(function(result){
+        console.log(result);
+    })
+})
+
+// console.log(p1);
+// p1.drawSpell();
+// p1.drawSpell();
+// p1.drawSpell();
+// p1.drawSpell();
+// p1.drawElement();
+// console.log(p1);
 
 // var ranNums = shuffle([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]);
 
