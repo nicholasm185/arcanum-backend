@@ -24,9 +24,6 @@ module.exports = class Player{
     }
 
     playCard(card){
-        console.log(this.fire >= card.fire_req);
-        console.log(this.earth >= card.earth_req);
-        console.log(this.water >= card.water_req);
         if((this.fire >= card.fire_req) && (this.earth >= card.earth_req) && (this.water >= card.water_req)){
                 this.fire -= card.fire_req;
                 this.earth -= card.earth_req;
@@ -36,7 +33,7 @@ module.exports = class Player{
                 this.lifesteal += card.lifesteal;
                 return true;
         }else{
-            console.log("requirements not met");
+            console.log("requirements to play not met");
             return false;
         }
     }

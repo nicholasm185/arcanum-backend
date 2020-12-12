@@ -67,10 +67,6 @@ io.on('connection', function(socket) {
     
 });
 
-function randomizeCard(){
-
-};
-
 function mainGameLoop(players, sockets){
     // get randomized turn
     var turn = Math.round(Math.random()) + 1;
@@ -136,7 +132,7 @@ function mainGameLoop(players, sockets){
         }
         else{
             console.log('p1 tried to yeet when its not their turn');
-            p1S.emit('WARN_turn', {msg: "it's not your turn"})
+            sendTurnWarning(p1S, "its not your turn");
         }
     });
 
@@ -159,26 +155,67 @@ function mainGameLoop(players, sockets){
         }
         else{
             console.log('p2 tried to yeet when its not their turn');
-            p2S.emit('WARN_turn', {msg: "it's not your turn"});
+            sendTurnWarning(p2S, "its not your turn");
         }
     });
 
     // play card event
     p1S.on('playCard', function(e){
-
+        if(turn == 1){
+            if(p1.hand.includes(e.cardNo)){
+                const card = cards.find(card => card.cardNo === e.cardNo);
+                if(p1.playCard(card)){
+                    const cardIndex = p1.hand.indexOf(card.cardNo);
+                    p1.hand.splice(cardIndex, 1);
+                    p2.applyCard(card);
+                    sendBoard(p1, p2, p1S, p2S);
+                }else{
+                    sendCardWarning(p1S, "insufficient resources to play card");
+                }
+            }else{
+                sendCardWarning(p1S, "card not in hand");
+            }
+        }else{
+            sendTurnWarning(p1S, 'its not your turn');
+        }
+        
     });
 
     p2S.on('playCard', function(e){
-
+        if(turn == 2){
+            if(p2.hand.includes(e.cardNo)){
+                const card = cards.find(card => card.cardNo === e.cardNo);
+                if(p2.playCard(card)){
+                    const cardIndex = p2.hand.indexOf(card.cardNo);
+                    p2.hand.splice(cardIndex, 1);
+                    p2.applyCard(card);
+                    sendBoard(p1, p2, p1S, p2S);
+                }else{
+                    sendCardWarning(p2S, "insufficient resources to play card");
+                }
+            }else{
+                sendCardWarning(p2S, "card not in hand");
+            }
+        }else{
+            sendTurnWarning(p2S, 'its not your turn');
+        }
     });
 
     // end turn event
     p1S.on('endTurn', function(e){
-
+        p1.turnEnd();
+        turn = 2;
+        turnNum ++;
+        sendTurn(p1S, p2S, turn);
+        sendBoard(p1, p2, p1S, p2S);
     });
 
     p2S.on('endTurn', function(e){
-
+        p2.turnEnd();
+        turn = 1;
+        turnNum ++;
+        sendTurn(p1S, p2S, turn);
+        sendBoard(p1, p2, p1S, p2S);
     });
     
     p1S.on('disconnect', function(){
@@ -201,8 +238,12 @@ function mainGameLoop(players, sockets){
     
 };
 
-function sendCardWarning(playerSocket){
-    playerSocket.emit('ERR_isufficientElements', {status: "error",msg: 'insufficient resources for card'})
+function sendCardWarning(playerSocket, msg){
+    playerSocket.emit('ERR_cardError', {status: "error",msg: msg})
+}
+
+function sendTurnWarning(playerSocket, msg){
+    playseSocket.emit('WARN_turn', {msg: msg})
 }
 
 function sendTurn(p1S, p2S, curTurn){
