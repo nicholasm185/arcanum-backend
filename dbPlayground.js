@@ -35,11 +35,42 @@ var Player = require('./Classes/player');
 // })
 // console.log(x)
 
-var cardIDs = [
-    1,  2,  3,  4,  5,  6,
-    7,  8,  9, 10, 11, 12,
-    13, 14, 15
-]
+var cards;
+var cardIDs;
+dbFunc.getCards().then(function(results){
+    cards = results;
+    cardIDs = cards.map(function(card){
+        return card["cardNo"];
+    });
+    console.log("got cards");
+    testMain();
+});
+
+function testMain(){
+    var selected = cards.find(card => card.cardNo === 4);
+    console.log('selected: ' + selected.earth_req);
+
+    var turn = 2;
+    var p1 = new Player();
+    var p2 = new Player();
+    p1['deck_spell'] = randomDeck(cardIDs);
+    p1['deck_element'] = randomElement();
+    p2['deck_spell'] = randomDeck(cardIDs);
+    p2['deck_element'] = randomElement();
+
+    p1.drawSpell(5);
+    p2.drawSpell(5);
+    p1.slow = 1;
+    // p1.armor = 4;
+    p1.earth = 4;
+    // p1.applyCard(cards.filter(card => card.cardNo === 1)[0]);
+    p1.playCard(selected)
+    console.log(p1);
+    // p1.turnEnd();
+    // console.log(p1);
+}
+
+
 
 function shuffle(array) {
     var i = array.length,
@@ -67,23 +98,15 @@ function randomElement(){
     return shuffle(pool);
 }
 
-var turn = 2;
-var p1 = new Player();
-var p2 = new Player();
-p1['deck_spell'] = randomDeck(cardIDs);
-p1['deck_element'] = randomElement();
-p2['deck_spell'] = randomDeck(cardIDs);
-p2['deck_element'] = randomElement();
 
-p1.drawSpell(5);
-p2.drawSpell(5);
 
-dbFunc.createGame(p1, p2, true, turn, ((turn == 1) ? [1,2] : [2,1])).then(function(result){
-    console.log(result._id);
-    dbFunc.getGame(result._id).then(function(result){
-        console.log(result);
-    })
-})
+
+// dbFunc.createGame(p1, p2, true, turn, ((turn == 1) ? [1,2] : [2,1])).then(function(result){
+//     console.log(result._id);
+//     dbFunc.getGame(result._id).then(function(result){
+//         console.log(result);
+//     })
+// })
 
 // console.log(p1);
 // p1.drawSpell();

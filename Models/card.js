@@ -33,7 +33,7 @@ var schema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    eart_req: {
+    earth_req: {
         type: Number,
         required: true
     },

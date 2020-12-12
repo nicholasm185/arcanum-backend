@@ -247,7 +247,3 @@ function randomElement(){
                 3,3,3,3,3,3,3,3,3,3]
     return shuffle(pool);
 }
-
-function drawCard(player){
-    player['hand'].push(player['deck_spell'].pop())
-}
