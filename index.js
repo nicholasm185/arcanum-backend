@@ -162,10 +162,29 @@ function mainGameLoop(players, sockets){
             p2S.emit('WARN_turn', {msg: "it's not your turn"});
         }
     });
+
+    // play card event
+    p1S.on('playCard', function(e){
+
+    });
+
+    p2S.on('playCard', function(e){
+
+    });
+
+    // end turn event
+    p1S.on('endTurn', function(e){
+
+    });
+
+    p2S.on('endTurn', function(e){
+
+    });
     
     p1S.on('disconnect', function(){
         if(!checkWin(p1, p2, p1S, p2S)){
             p2S.emit('winner', {winner: 2});
+            gameRunning = false;
         }
         p2S.disconnect();
         cleanup(players, sockets);
@@ -174,12 +193,17 @@ function mainGameLoop(players, sockets){
     p2S.on('disconnect', function(){
         if(!checkWin(p1, p2, p1S, p2S)){
             p1S.emit('winner', {winner: 1});
+            gameRunning = false;
         }
         p1S.disconnect();
         cleanup(players, sockets);
     })
     
 };
+
+function sendCardWarning(playerSocket){
+    playerSocket.emit('ERR_isufficientElements', {status: "error",msg: 'insufficient resources for card'})
+}
 
 function sendTurn(p1S, p2S, curTurn){
     p1S.emit('curTurn', {curTurn: curTurn});
