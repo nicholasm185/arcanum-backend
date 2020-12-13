@@ -1,12 +1,12 @@
 // third party imports
 var io = require('socket.io')(process.env.PORT || 8080);
 
-
 // local imports
 var Player = require('./Classes/player');
 var dbHelper = require('./mongoHelper');
 var dbFunc = require('./dbFunctions');
 const game = require('./Models/game');
+const card = require('./Models/card');
 
 var players = [];
 var sockets = [];
@@ -25,12 +25,12 @@ dbFunc.getCards().then(function(results){
 // poo poo workaround for "open" socket.io event emitted twice by unity
 var gameRunning = false;
 
+// *****************************accepting connections**************************** 
 console.log('server starting');
 io.on('connection', function(socket) {
     if (Object.keys(players).length < 2){
         console.log('connection established');
         
-
         var player = new Player();
         var thisPlayerID = player.playerID;
 
@@ -67,11 +67,13 @@ io.on('connection', function(socket) {
     
 });
 
+// *****************************main loop of the game**************************** 
 function mainGameLoop(players, sockets){
     // get randomized turn
     var turn = Math.round(Math.random()) + 1;
     var turnNum = 1;
     var phase = 0;
+    var cardsDrawn = 0;
     console.log("Game commencing; get ready!");
 
     // get player objects from players
@@ -91,10 +93,6 @@ function mainGameLoop(players, sockets){
     p1S.emit('playerNumber', {you: 1});
     p2S = sockets[IDs[1]];
     p2S.emit('playerNumber', {you: 2});
-
-    // // Testing hand
-    // p1['hand'] = [1,1,1,1,1,1];
-    // p2['hand'] = [1,1,1,1,1,1];
 
     // Generate Hand
     p1.drawSpell(5);
@@ -158,6 +156,37 @@ function mainGameLoop(players, sockets){
             sendTurnWarning(p2S, "its not your turn");
         }
     });
+
+/*
+    // draw card event
+    p1.on('drawCard', function(e){
+        if(turn == 1){
+            if(cardsDrawn <= 0){
+                p1.drawSpell();
+                cardsDrawn ++;
+                sendBoard(p1, p2, p1S, p2S);
+            }else{
+                p1.sendTurnWarning(p1S, "you have drawn your card");
+            }
+        }else{
+            p1.sendTurnWarning(p1S, "its not your turn");
+        }
+    });
+
+    p2.on('drawCard', function(e){
+        if(turn == 1){
+            if(cardsDrawn <= 0){
+                p2.drawSpell();
+                cardsDrawn ++;
+                sendBoard(p1, p2, p1S, p2S);
+            }else{
+                p2.sendTurnWarning(p2S, "you have drawn your card");
+            }
+        }else{
+            p2.sendTurnWarning(p2S, "its not your turn");
+        }
+    });
+*/
 
     // play card event
     p1S.on('playCard', function(e){
@@ -240,7 +269,7 @@ function mainGameLoop(players, sockets){
     
 };
 
-
+// *****************************utility functions**************************** 
 function nextTurn(p1,p2, turnNum){
 
 }

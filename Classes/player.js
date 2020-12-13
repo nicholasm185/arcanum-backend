@@ -79,13 +79,13 @@ module.exports = class Player{
         this.water += num;
     }
 
-    drawSpell(n){
+    drawSpell(n = 1){
         for(var i = 0; i < n; i++){
             this.hand.push(this.deck_spell.pop());
         };
     }
 
-    drawElement(n){
+    drawElement(n = 1){
         for(var i = 0; i < n; i++){
             const drawn = this.deck_element.pop()
             switch (drawn) {
