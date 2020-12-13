@@ -167,7 +167,7 @@ function mainGameLoop(players, sockets){
                 if(p1.playCard(card)){
                     const cardIndex = p1.hand.indexOf(card.cardNo);
                     p1.hand.splice(cardIndex, 1);
-                    p2.applyCard(card);
+                    p1.doLifesteal(p2.applyCard(card));
                     sendBoard(p1, p2, p1S, p2S);
                 }else{
                     sendCardWarning(p1S, "insufficient resources to play card");
@@ -188,7 +188,7 @@ function mainGameLoop(players, sockets){
                 if(p2.playCard(card)){
                     const cardIndex = p2.hand.indexOf(card.cardNo);
                     p2.hand.splice(cardIndex, 1);
-                    p2.applyCard(card);
+                    p2.doLifesteal(p1.applyCard(card));
                     sendBoard(p1, p2, p1S, p2S);
                 }else{
                     sendCardWarning(p2S, "insufficient resources to play card");
@@ -208,6 +208,7 @@ function mainGameLoop(players, sockets){
         turnNum ++;
         sendTurn(p1S, p2S, turn);
         sendBoard(p1, p2, p1S, p2S);
+        // nextTurn(p1, p2);
     });
 
     p2S.on('endTurn', function(e){
@@ -216,6 +217,7 @@ function mainGameLoop(players, sockets){
         turnNum ++;
         sendTurn(p1S, p2S, turn);
         sendBoard(p1, p2, p1S, p2S);
+        // nextTurn(p1, p2);
     });
     
     p1S.on('disconnect', function(){
@@ -237,6 +239,11 @@ function mainGameLoop(players, sockets){
     })
     
 };
+
+
+function nextTurn(p1,p2, turnNum){
+
+}
 
 function sendCardWarning(playerSocket, msg){
     playerSocket.emit('ERR_cardError', {status: "error",msg: msg})

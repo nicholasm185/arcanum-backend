@@ -47,8 +47,8 @@ dbFunc.getCards().then(function(results){
 });
 
 function testMain(){
-    var selected = cards.find(card => card.cardNo === 4);
-    console.log('selected: ' + selected.earth_req);
+    var e = cards.find(card => card.cardNo === 1);
+    console.log('selected: ' + e.earth_req);
 
     var turn = 2;
     var p1 = new Player();
@@ -61,11 +61,30 @@ function testMain(){
     p1.drawSpell(5);
     p2.drawSpell(5);
     p1.slow = 1;
-    // p1.armor = 4;
     p1.earth = 4;
-    // p1.applyCard(cards.filter(card => card.cardNo === 1)[0]);
-    p1.playCard(selected)
+    p1.fire = 2;
+    p1.health = 20;
+    p1.lifesteal = 1;
+    p2.armor = 3;
+    p1.hand.push(1);
+    console.log(p1.hand)
+    if(p1.hand.includes(e.cardNo)){
+        const card = cards.find(card => card.cardNo === e.cardNo);
+        if(p1.playCard(card)){
+            const cardIndex = p1.hand.indexOf(card.cardNo);
+            p1.hand.splice(cardIndex, 1);
+            p1.doLifesteal(p2.applyCard(card));
+            // sendBoard(p1, p2, p1S, p2S);
+        }else{
+            // sendCardWarning(p1S, "insufficient resources to play card");
+            console.log("not enough resources");
+        }
+    }else{
+        // sendCardWarning(p1S, "card not in hand");
+        console.log('card not found');
+    }
     console.log(p1);
+    console.log(p2);
     // p1.turnEnd();
     // console.log(p1);
 }

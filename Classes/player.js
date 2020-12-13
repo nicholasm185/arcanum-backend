@@ -18,9 +18,10 @@ module.exports = class Player{
     }
 
     applyCard(card){
-        this.doDamage(card.damage);
+        var lifeStolen = this.doDamage(card.damage);
         this.burn += card.burn;
         this.slow += card.slow;
+        return lifeStolen;
     }
 
     playCard(card){
@@ -39,6 +40,7 @@ module.exports = class Player{
     }
 
     doDamage(damage) {
+        var damageDone = 0;
         damage = ((this.slow > 0) ? (damage *= 1.5): damage)
         if(damage <= this.armor){
             this.armor -= damage;
@@ -46,7 +48,9 @@ module.exports = class Player{
             damage -= this.armor;
             this.armor = 0;
             this.health -= damage;
+            damageDone = damage;
         }
+        return damageDone;
     }
 
     doRegen(regen){
@@ -54,6 +58,12 @@ module.exports = class Player{
             this.health = 30;
         }else{
             this.health += regen;
+        }
+    }
+
+    doLifesteal(lifeStolen){
+        if(this.lifesteal > 0){
+            this.doRegen(lifeStolen);
         }
     }
 
