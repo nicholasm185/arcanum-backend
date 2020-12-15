@@ -246,6 +246,14 @@ function mainGameLoop(players, sockets){
             drawManager(p2, round);
             sendTurn(p1S, p2S, turn);
             sendBoard(p1, p2, p1S, p2S);
+            if(checkWin(p1, p2, p1S, p2S)){
+                p1S.disconnect();
+                p2S.disconnect();
+                cleanup(players, sockets);
+                console.log('game finished');
+                gameRunning = false;
+                return;
+            }
             console.log(p1);
             console.log(p2);
         }else{
@@ -263,6 +271,14 @@ function mainGameLoop(players, sockets){
             drawManager(p1, round);
             sendTurn(p1S, p2S, turn);
             sendBoard(p1, p2, p1S, p2S);
+            if(checkWin(p1, p2, p1S, p2S)){
+                p1S.disconnect();
+                p2S.disconnect();
+                cleanup(players, sockets);
+                console.log('game finished');
+                gameRunning = false;
+                return;
+            }
             console.log(p1);
             console.log(p2);
         }else{
@@ -309,8 +325,8 @@ function drawManager(player, round){
     }else if(round >= 5){
         numEl = 5;
     }
-    player.drawElement(1);
-    player.drawSpell(numEl);
+    player.drawElement(numEl);
+    player.drawSpell(1);
 }
 
 function successTurn(playerSocket){
