@@ -1,5 +1,6 @@
 var shortID = require('shortid');
 
+const MAX_HAND = 10
 module.exports = class Player{
     constructor(){
         this.playerName = '';
@@ -81,7 +82,16 @@ module.exports = class Player{
 
     drawSpell(n = 1){
         for(var i = 0; i < n; i++){
-            this.hand.push(this.deck_spell.pop());
+            if(this.hand.length < MAX_HAND){
+                var spell = this.deck_spell.pop()
+                this.hand.push(spell);
+                return spell;
+            }
+            else{
+                var spell = null;
+                this.deck_spell.pop();
+                return spell;
+            }
         };
     }
 
@@ -113,5 +123,9 @@ module.exports = class Player{
         this.lifesteal = ((this.lifesteal > 0) ? (this.lifesteal - 1): this.lifesteal);
     }
     
+    turnStart(){
+        var spellNo = this.drawSpell()
+        return spellNo
+    }
 
 }

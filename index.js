@@ -112,7 +112,7 @@ function mainGameLoop(players, sockets){
     // test function for both players
     p1S.on('yeet', function(e){
         if(turn == 1){
-            console.log("player 1 yeeted");
+            console.log("player 1 yeeted " + e.yeet);
             turn = 2;
             turnNum ++;
             p2.doDamage(1);
@@ -136,7 +136,7 @@ function mainGameLoop(players, sockets){
 
     p2S.on('yeet', function(e){
         if(turn == 2){
-            console.log("player 2 yeeted");
+            console.log("player 2 yeeted "+ e.yeet);
             turn = 1;
             turnNum ++;
             p1.doDamage(1);
@@ -235,6 +235,7 @@ function mainGameLoop(players, sockets){
         p1.turnEnd();
         turn = 2;
         turnNum ++;
+        p2.turnStart();
         sendTurn(p1S, p2S, turn);
         sendBoard(p1, p2, p1S, p2S);
         // nextTurn(p1, p2);
@@ -244,6 +245,7 @@ function mainGameLoop(players, sockets){
         p2.turnEnd();
         turn = 1;
         turnNum ++;
+        p1.turnStart();
         sendTurn(p1S, p2S, turn);
         sendBoard(p1, p2, p1S, p2S);
         // nextTurn(p1, p2);
@@ -272,6 +274,11 @@ function mainGameLoop(players, sockets){
 // *****************************utility functions**************************** 
 function nextTurn(p1,p2, turnNum){
 
+}
+
+function startTurn(player, playerSocket){
+    var drawnCard = player.turnStart();
+    playerSocket.emit('cardDraw', {card: drawnCard});
 }
 
 function sendCardWarning(playerSocket, msg){
