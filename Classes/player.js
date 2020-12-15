@@ -1,6 +1,6 @@
 var shortID = require('shortid');
 
-const MAX_HAND = 10
+const MAX_HAND = 10;
 module.exports = class Player{
     constructor(){
         this.playerName = '';
@@ -80,7 +80,7 @@ module.exports = class Player{
         this.water += num;
     }
 
-    drawSpell(n = 1){
+    drawSpell(n){
         for(var i = 0; i < n; i++){
             if(this.hand.length < MAX_HAND){
                 var spell = this.deck_spell.pop()
@@ -95,7 +95,7 @@ module.exports = class Player{
         };
     }
 
-    drawElement(n = 1){
+    drawElement(n){
         for(var i = 0; i < n; i++){
             const drawn = this.deck_element.pop()
             switch (drawn) {
