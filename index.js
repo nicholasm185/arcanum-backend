@@ -98,6 +98,11 @@ function mainGameLoop(players, sockets){
     p1.drawSpell(5);
     p2.drawSpell(5);
 
+    p1.water = 5;
+    p1.earth = 5;
+    p2.water = 5;
+    p2.earth = 5;
+
     // Send the first state of board
     sendBoard(p1, p2, p1S, p2S);
 
@@ -194,6 +199,7 @@ function mainGameLoop(players, sockets){
             if(p1.hand.includes(e.cardNo)){
                 const card = cards.find(card => card.cardNo === e.cardNo);
                 if(p1.playCard(card)){
+                    console.log('playing card: ' + e.cardNo);
                     const cardIndex = p1.hand.indexOf(card.cardNo);
                     p1.hand.splice(cardIndex, 1);
                     p1.doLifesteal(p2.applyCard(card));
@@ -215,6 +221,7 @@ function mainGameLoop(players, sockets){
             if(p2.hand.includes(e.cardNo)){
                 const card = cards.find(card => card.cardNo === e.cardNo);
                 if(p2.playCard(card)){
+                    console.log('playing card: ' + e.cardNo);
                     const cardIndex = p2.hand.indexOf(card.cardNo);
                     p2.hand.splice(cardIndex, 1);
                     p2.doLifesteal(p1.applyCard(card));
