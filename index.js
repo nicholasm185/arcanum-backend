@@ -104,12 +104,12 @@ function mainGameLoop(players, sockets){
     p2.water = 5;
     p2.earth = 5;
 
-    // Send the first state of board
-    sendBoard(p1, p2, p1S, p2S);
-
     // tell the current turn to all players
     p1S.emit('curTurn', {curTurn: turn});
     p2S.emit('curTurn', {curTurn: turn});
+
+    // Send the first state of board
+    sendBoard(p1, p2, p1S, p2S);
 
     dbFunc.createGame(p1, p2, true, turn, ((turn == 1) ? [1,2] : [2,1])).then(function(result){
         console.log(result);
