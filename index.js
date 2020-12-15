@@ -196,15 +196,11 @@ function mainGameLoop(players, sockets){
 
     // play card event
     p1S.on('playCard', function(e){
-        console.log('p1 tries to play ' + e.cardNo);
-        console.log(p1.hand);
-        console.log(typeof p1.hand)
-        console.log(typeof e.cardNo);
         if(turn == 1){
             if(p1.hand.includes(parseInt(e.cardNo))){
-                console.log('playing card: ' + e.cardNo);
                 const card = cards.find(card => card.cardNo === parseInt(e.cardNo));
                 if(p1.playCard(card)){
+                    console.log('p1 playing card: ' + e.cardNo);
                     console.log(card);
                     const cardIndex = p1.hand.indexOf(card.cardNo);
                     p1.hand.splice(cardIndex, 1);
@@ -226,15 +222,11 @@ function mainGameLoop(players, sockets){
     });
 
     p2S.on('playCard', function(e){
-        console.log('p2 tries to play ' + e.cardNo);
-        console.log(p2.hand);
-        console.log(typeof p2.hand)
-        console.log(typeof e.cardNo);
         if(turn == 2){
             if(p2.hand.includes(parseInt(e.cardNo))){
-                console.log('playing card: ' + e.cardNo);
                 const card = cards.find(card => card.cardNo === parseInt(e.cardNo));
                 if(p2.playCard(card)){
+                    console.log('p2 playing card: ' + e.cardNo);
                     console.log(card);
                     const cardIndex = p2.hand.indexOf(card.cardNo);
                     p2.hand.splice(cardIndex, 1);
@@ -256,23 +248,32 @@ function mainGameLoop(players, sockets){
 
     // end turn event
     p1S.on('endTurn', function(e){
-        p1.turnEnd();
-        turn = 2;
-        turnNum ++;
-        p2.turnStart();
-        sendTurn(p1S, p2S, turn);
-        sendBoard(p1, p2, p1S, p2S);
-        // nextTurn(p1, p2);
+        if(turn == 1){
+            p1.turnEnd();
+            turn = 2;
+            turnNum ++;
+            p2.turnStart();
+            sendTurn(p1S, p2S, turn);
+            sendBoard(p1, p2, p1S, p2S);
+            // nextTurn(p1, p2);
+        }else{
+            console.log('not your turn')
+        }
     });
 
     p2S.on('endTurn', function(e){
-        p2.turnEnd();
-        turn = 1;
-        turnNum ++;
-        p1.turnStart();
-        sendTurn(p1S, p2S, turn);
-        sendBoard(p1, p2, p1S, p2S);
-        // nextTurn(p1, p2);
+        if(turn == 2){
+            p2.turnEnd();
+            turn = 1;
+            turnNum ++;
+            p1.turnStart();
+            sendTurn(p1S, p2S, turn);
+            sendBoard(p1, p2, p1S, p2S);
+            // nextTurn(p1, p2);
+        }else{
+            console.log('not your turn')
+        }
+        
     });
     
     p1S.on('disconnect', function(){
