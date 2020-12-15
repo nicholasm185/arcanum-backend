@@ -310,7 +310,7 @@ function drawManager(player, round){
         numEl = 5;
     }
     player.drawElement(1);
-    player.drawSpell(num);
+    player.drawSpell(numEl);
 }
 
 function successTurn(playerSocket){
