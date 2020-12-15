@@ -190,6 +190,7 @@ function mainGameLoop(players, sockets){
 
     // play card event
     p1S.on('playCard', function(e){
+        console.log('p1 tries to play ' + e.cardNo);
         if(turn == 1){
             if(p1.hand.includes(e.cardNo)){
                 const card = cards.find(card => card.cardNo === e.cardNo);
@@ -211,6 +212,7 @@ function mainGameLoop(players, sockets){
     });
 
     p2S.on('playCard', function(e){
+        console.log('p2 tries to play ' + e.cardNo);
         if(turn == 2){
             if(p2.hand.includes(e.cardNo)){
                 const card = cards.find(card => card.cardNo === e.cardNo);
