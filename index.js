@@ -198,7 +198,7 @@ function mainGameLoop(players, sockets){
         console.log('p1 tries to play ' + e.cardNo);
         if(turn == 1){
             if(p1.hand.includes(e.cardNo)){
-                const card = cards.find(card => card.cardNo === e.cardNo);
+                const card = cards.find(card => card.cardNo == e.cardNo);
                 if(p1.playCard(card)){
                     console.log('playing card: ' + e.cardNo);
                     const cardIndex = p1.hand.indexOf(card.cardNo);
@@ -221,7 +221,7 @@ function mainGameLoop(players, sockets){
         console.log('p2 tries to play ' + e.cardNo);
         if(turn == 2){
             if(p2.hand.includes(e.cardNo)){
-                const card = cards.find(card => card.cardNo === e.cardNo);
+                const card = cards.find(card => card.cardNo == e.cardNo);
                 if(p2.playCard(card)){
                     console.log('playing card: ' + e.cardNo);
                     const cardIndex = p2.hand.indexOf(card.cardNo);
