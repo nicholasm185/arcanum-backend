@@ -203,7 +203,7 @@ function mainGameLoop(players, sockets){
         if(turn == 1){
             if(p1.hand.includes(parseInt(e.cardNo))){
                 console.log('playing card: ' + e.cardNo);
-                const card = cards.find(card => card.cardNo === e.cardNo);
+                const card = cards.find(card => card.cardNo === parseInt(e.cardNo));
                 if(p1.playCard(card)){
                     console.log(card);
                     const cardIndex = p1.hand.indexOf(card.cardNo);
@@ -233,7 +233,7 @@ function mainGameLoop(players, sockets){
         if(turn == 2){
             if(p2.hand.includes(parseInt(e.cardNo))){
                 console.log('playing card: ' + e.cardNo);
-                const card = cards.find(card => card.cardNo === e.cardNo);
+                const card = cards.find(card => card.cardNo === parseInt(e.cardNo));
                 if(p2.playCard(card)){
                     console.log(card);
                     const cardIndex = p2.hand.indexOf(card.cardNo);
