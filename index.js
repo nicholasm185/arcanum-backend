@@ -95,13 +95,13 @@ function mainGameLoop(players, sockets){
 
     // Generate Hand
     if(turn == 1){
-        p1.drawSpell(1);
-        p2.drawSpell(1);
+        p1.drawSpell(3);
+        p2.drawSpell(3);
         p1.drawElement(1);
         p2.drawElement(2);
     }else{
-        p1.drawSpell(1);
-        p2.drawSpell(1);
+        p1.drawSpell(3);
+        p2.drawSpell(3);
         p1.drawElement(2)
         p1.drawElement(1);
     }
@@ -242,7 +242,7 @@ function mainGameLoop(players, sockets){
             p1.turnEnd();
             turn = 2;
             turnNum ++;
-            round = ceil(turnNum/2);
+            round = Math.ceil(turnNum/2);
             drawManager(p2, round);
             sendTurn(p1S, p2S, turn);
             sendBoard(p1, p2, p1S, p2S);
@@ -259,7 +259,7 @@ function mainGameLoop(players, sockets){
             p2.turnEnd();
             turn = 1;
             turnNum ++;
-            round = ceil(turnNum/2);
+            round = Math.ceil(turnNum/2);
             drawManager(p1, round);
             sendTurn(p1S, p2S, turn);
             sendBoard(p1, p2, p1S, p2S);
