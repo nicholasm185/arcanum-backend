@@ -120,10 +120,5 @@ module.exports = class Player{
         this.burn = ((this.burn > 0) ? (this.burn - 1): this.burn);
         this.lifesteal = ((this.lifesteal > 0) ? (this.lifesteal - 1): this.lifesteal);
     }
-    
-    turnStart(){
-        var spellNo = this.drawSpell()
-        return spellNo
-    }
 
 }

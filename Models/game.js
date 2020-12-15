@@ -80,6 +80,10 @@ var schema = new mongoose.Schema({
         type: Date,
         default: new Date().toISOString()
     },
+    round: {
+        type: Number,
+        default: 0
+    },
     totalTurn: {
         type: Number,
         default: 1

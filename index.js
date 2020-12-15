@@ -70,11 +70,9 @@ io.on('connection', function(socket) {
 // *****************************main loop of the game**************************** 
 function mainGameLoop(players, sockets){
     // get randomized turn
-    // var turn = Math.round(Math.random()) + 1;
-    var turn = 1;
-    var turnNum = 1;
-    var phase = 0;
-    var cardsDrawn = 0;
+    var turn = Math.round(Math.random()) + 1;
+    var turnNum = 0;
+    var round = 1;
     console.log("Game commencing; get ready!");
 
     // get player objects from players
@@ -96,13 +94,17 @@ function mainGameLoop(players, sockets){
     p2S.emit('playerNumber', {you: 2});
 
     // Generate Hand
-    p1.drawSpell(5);
-    p2.drawSpell(5);
-
-    p1.water = 5;
-    p1.earth = 5;
-    p2.water = 5;
-    p2.earth = 5;
+    if(turn == 1){
+        p1.drawSpell(1);
+        p2.drawSpell(1);
+        p1.drawElement(1);
+        p2.drawElement(2);
+    }else{
+        p1.drawSpell(1);
+        p2.drawSpell(1);
+        p1.drawElement(2)
+        p1.drawElement(1);
+    }
 
     // tell the current turn to all players
     p1S.emit('curTurn', {curTurn: turn});
@@ -162,37 +164,6 @@ function mainGameLoop(players, sockets){
             sendTurnWarning(p2S, "its not your turn");
         }
     });
-
-/*
-    // draw card event
-    p1.on('drawCard', function(e){
-        if(turn == 1){
-            if(cardsDrawn <= 0){
-                p1.drawSpell();
-                cardsDrawn ++;
-                sendBoard(p1, p2, p1S, p2S);
-            }else{
-                p1.sendTurnWarning(p1S, "you have drawn your card");
-            }
-        }else{
-            p1.sendTurnWarning(p1S, "its not your turn");
-        }
-    });
-
-    p2.on('drawCard', function(e){
-        if(turn == 1){
-            if(cardsDrawn <= 0){
-                p2.drawSpell();
-                cardsDrawn ++;
-                sendBoard(p1, p2, p1S, p2S);
-            }else{
-                p2.sendTurnWarning(p2S, "you have drawn your card");
-            }
-        }else{
-            p2.sendTurnWarning(p2S, "its not your turn");
-        }
-    });
-*/
 
     // play card event
     p1S.on('playCard', function(e){
@@ -271,12 +242,12 @@ function mainGameLoop(players, sockets){
             p1.turnEnd();
             turn = 2;
             turnNum ++;
-            p2.turnStart();
+            round = ceil(turnNum/2);
+            drawManager(p2, round);
             sendTurn(p1S, p2S, turn);
             sendBoard(p1, p2, p1S, p2S);
             console.log(p1);
             console.log(p2);
-            // nextTurn(p1, p2);
         }else{
             console.log('not your turn')
         }
@@ -288,12 +259,12 @@ function mainGameLoop(players, sockets){
             p2.turnEnd();
             turn = 1;
             turnNum ++;
-            p1.turnStart();
+            round = ceil(turnNum/2);
+            drawManager(p1, round);
             sendTurn(p1S, p2S, turn);
             sendBoard(p1, p2, p1S, p2S);
             console.log(p1);
             console.log(p2);
-            // nextTurn(p1, p2);
         }else{
             console.log('not your turn')
         }
@@ -325,9 +296,21 @@ function nextTurn(p1,p2, turnNum){
 
 }
 
-function startTurn(player, playerSocket){
-    var drawnCard = player.turnStart();
-    playerSocket.emit('cardDraw', {card: drawnCard});
+function drawManager(player, round){
+    var numEl = 0;
+    if(round == 1){
+        numEl = 1;
+    }else if(round == 2){
+        numEl = 2;
+    }else if(round == 3){
+        numEl = 3;
+    }else if(round == 4){
+        numEl = 4;
+    }else if(round >= 5){
+        numEl = 5;
+    }
+    player.drawElement(1);
+    player.drawSpell(num);
 }
 
 function successTurn(playerSocket){
