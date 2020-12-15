@@ -70,7 +70,8 @@ io.on('connection', function(socket) {
 // *****************************main loop of the game**************************** 
 function mainGameLoop(players, sockets){
     // get randomized turn
-    var turn = Math.round(Math.random()) + 1;
+    // var turn = Math.round(Math.random()) + 1;
+    var turn = 1;
     var turnNum = 1;
     var phase = 0;
     var cardsDrawn = 0;
