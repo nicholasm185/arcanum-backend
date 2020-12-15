@@ -198,21 +198,25 @@ function mainGameLoop(players, sockets){
         console.log('p1 tries to play ' + e.cardNo);
         if(turn == 1){
             if(p1.hand.includes(e.cardNo)){
+                console.log('playing card: ' + e.cardNo);
                 const card = cards.find(card => card.cardNo == e.cardNo);
                 if(p1.playCard(card)){
-                    console.log('playing card: ' + e.cardNo);
+                    console.log(card);
                     const cardIndex = p1.hand.indexOf(card.cardNo);
                     p1.hand.splice(cardIndex, 1);
                     p1.doLifesteal(p2.applyCard(card));
                     sendBoard(p1, p2, p1S, p2S);
                 }else{
                     sendCardWarning(p1S, "insufficient resources to play card");
+                    console.log("insufficient resources to play card");
                 }
             }else{
                 sendCardWarning(p1S, "card not in hand");
+                console.log("card not in hand");
             }
         }else{
             sendTurnWarning(p1S, 'its not your turn');
+            console.log('its not your turn');
         }
         
     });
@@ -221,21 +225,25 @@ function mainGameLoop(players, sockets){
         console.log('p2 tries to play ' + e.cardNo);
         if(turn == 2){
             if(p2.hand.includes(e.cardNo)){
+                console.log('playing card: ' + e.cardNo);
                 const card = cards.find(card => card.cardNo == e.cardNo);
                 if(p2.playCard(card)){
-                    console.log('playing card: ' + e.cardNo);
+                    console.log(card);
                     const cardIndex = p2.hand.indexOf(card.cardNo);
                     p2.hand.splice(cardIndex, 1);
                     p2.doLifesteal(p1.applyCard(card));
                     sendBoard(p1, p2, p1S, p2S);
                 }else{
                     sendCardWarning(p2S, "insufficient resources to play card");
+                    console.log("insufficient resources to play card");
                 }
             }else{
                 sendCardWarning(p2S, "card not in hand");
+                console.log("card not in hand");
             }
         }else{
             sendTurnWarning(p2S, 'its not your turn');
+            console.log('its not your turn');
         }
     });
 
