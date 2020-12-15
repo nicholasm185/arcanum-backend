@@ -207,6 +207,14 @@ function mainGameLoop(players, sockets){
                     p1.doLifesteal(p2.applyCard(card));
                     successTurn(p1S);
                     sendBoard(p1, p2, p1S, p2S);
+                    if(checkWin(p1, p2, p1S, p2S)){
+                        p1S.disconnect();
+                        p2S.disconnect();
+                        cleanup(players, sockets);
+                        console.log('game finished');
+                        gameRunning = false;
+                        return;
+                    }
                 }else{
                     sendCardWarning(p1S, "insufficient resources to play card");
                     console.log("insufficient resources to play card");
@@ -234,6 +242,14 @@ function mainGameLoop(players, sockets){
                     p2.doLifesteal(p1.applyCard(card));
                     successTurn(p2S);
                     sendBoard(p1, p2, p1S, p2S);
+                    if(checkWin(p1, p2, p1S, p2S)){
+                        p1S.disconnect();
+                        p2S.disconnect();
+                        cleanup(players, sockets);
+                        console.log('game finished');
+                        gameRunning = false;
+                        return;
+                    }
                 }else{
                     sendCardWarning(p2S, "insufficient resources to play card");
                     console.log("insufficient resources to play card");
@@ -251,12 +267,15 @@ function mainGameLoop(players, sockets){
     // end turn event
     p1S.on('endTurn', function(e){
         if(turn == 1){
+            console.log('ending p1 turn');
             p1.turnEnd();
             turn = 2;
             turnNum ++;
             p2.turnStart();
             sendTurn(p1S, p2S, turn);
             sendBoard(p1, p2, p1S, p2S);
+            console.log(p1);
+            console.log(p2);
             // nextTurn(p1, p2);
         }else{
             console.log('not your turn')
@@ -265,12 +284,15 @@ function mainGameLoop(players, sockets){
 
     p2S.on('endTurn', function(e){
         if(turn == 2){
+            console.log('ending p2 turn');
             p2.turnEnd();
             turn = 1;
             turnNum ++;
             p1.turnStart();
             sendTurn(p1S, p2S, turn);
             sendBoard(p1, p2, p1S, p2S);
+            console.log(p1);
+            console.log(p2);
             // nextTurn(p1, p2);
         }else{
             console.log('not your turn')
