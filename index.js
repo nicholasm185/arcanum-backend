@@ -244,7 +244,7 @@ function mainGameLoop(players, sockets){
                 endGame(p1S, p2S);
                 return;
             }
-            if(!drawManager(p1, round)){
+            if(!drawManager(p2, round)){
                 overDraw(p1S, p2S, 1);
                 endGame(p1S, p2S);
                 return;
