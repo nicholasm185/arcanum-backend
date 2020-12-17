@@ -97,13 +97,13 @@ function mainGameLoop(players, sockets){
     if(turn == 1){
         p1.drawSpell(3);
         p2.drawSpell(3);
-        p1.drawElement(1);
+        p1.drawElement(2);
         p2.drawElement(2);
     }else{
         p1.drawSpell(3);
         p2.drawSpell(3);
         p1.drawElement(2)
-        p1.drawElement(1);
+        p1.drawElement(2);
     }
 
     // tell the current turn to all players
@@ -354,6 +354,7 @@ function sendBoard(p1, p2, p1S, p2S){
     p2e = JSON.parse(JSON.stringify(p2));
     p1c['deck_spell'] = p2c['deck_spell'] = p1e['deck_spell'] = p2e['deck_spell'] = [];
     p1c['deck_element'] = p2c['deck_element'] = p1e['deck_element'] = p2e['deck_element'] = [];
+    p1c['cur_deck_element'] = p2c['cur_deck_element'] = p1e['cur_deck_element'] = p2e['cur_deck_element'] = []
     p1e['hand'] = [p1['hand'].length];
     p2e['hand'] = [p2['hand'].length];
     p1S.emit('Board:State', {you: p1c, enemy: p2e});
