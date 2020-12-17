@@ -140,7 +140,7 @@ module.exports = class Player{
 
     turnEnd(){
         if(this.burn > 0){
-            this.health--;
+            this.health -= this.burn;
         }
         this.slow = ((this.slow > 0) ? (this.slow - 1): this.slow);
         this.burn = ((this.burn > 0) ? (this.burn - 1): this.burn);
