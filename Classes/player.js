@@ -21,8 +21,12 @@ module.exports = class Player{
 
     applyCard(card){
         var lifeStolen = this.doDamage(card.damage);
-        this.burn += card.burn;
-        this.slow += card.slow;
+        if(card.burn > 0){
+            this.burn += card.burn;
+        }
+        if(card.slow > 0){
+            this.slow += card.slow;
+        }
         return lifeStolen;
     }
 
@@ -34,6 +38,12 @@ module.exports = class Player{
                 this.doRegen(card.regen);
                 this.armor += card.armor;
                 this.lifesteal += card.lifesteal;
+                if (card.burn < 0){
+                    this.burn += card.burn;
+                }
+                if (card.slow < 0){
+                    this.slow += card.burn;
+                }
                 return true;
         }else{
             console.log("requirements to play not met");
