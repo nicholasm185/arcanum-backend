@@ -109,14 +109,13 @@ module.exports = class Player{
             if(this.hand.length < MAX_HAND){
                 var spell = this.deck_spell.pop()
                 this.hand.push(spell);
-                return true;
             }
             else{
                 var spell = null;
                 this.deck_spell.pop();
-                return true;
             }
         };
+        return true
     }
 
     drawElement(n){
