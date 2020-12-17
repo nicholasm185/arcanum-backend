@@ -183,11 +183,7 @@ function mainGameLoop(players, sockets){
                     p2S.emit('lastCard', {cardNo: e.cardNo})
                     sendBoard(p1, p2, p1S, p2S);
                     if(checkWin(p1, p2, p1S, p2S)){
-                        p1S.disconnect();
-                        p2S.disconnect();
-                        cleanup(players, sockets);
-                        console.log('game finished');
-                        gameRunning = false;
+                        endGame(p1S, p2S);
                         return;
                     }
                 }else{
@@ -219,11 +215,7 @@ function mainGameLoop(players, sockets){
                     p1S.emit('lastCard', {cardNo: e.cardNo})
                     sendBoard(p1, p2, p1S, p2S);
                     if(checkWin(p1, p2, p1S, p2S)){
-                        p1S.disconnect();
-                        p2S.disconnect();
-                        cleanup(players, sockets);
-                        console.log('game finished');
-                        gameRunning = false;
+                        endGame(p1S, p2S);
                         return;
                     }
                 }else{
@@ -249,11 +241,12 @@ function mainGameLoop(players, sockets){
             turnNum ++;
             round = Math.ceil(turnNum/2);
             if(checkWin(p1, p2, p1S, p2S)){
-                p1S.disconnect();
-                p2S.disconnect();
-                cleanup(players, sockets);
-                console.log('game finished');
-                gameRunning = false;
+                endGame(p1S, p2S);
+                return;
+            }
+            if(!drawManager(p1, round)){
+                overDraw(p1S, p2S, 1);
+                endGame(p1S, p2S);
                 return;
             }
             drawManager(p2, round);
@@ -274,14 +267,14 @@ function mainGameLoop(players, sockets){
             turnNum ++;
             round = Math.ceil(turnNum/2);
             if(checkWin(p1, p2, p1S, p2S)){
-                p1S.disconnect();
-                p2S.disconnect();
-                cleanup(players, sockets);
-                console.log('game finished');
-                gameRunning = false;
+                endGame(p1S, p2S);
                 return;
             }
-            drawManager(p1, round);
+            if(!drawManager(p1, round)){
+                overDraw(p1S, p2S, 2);
+                endGame(p1S, p2S);
+                return;
+            }
             sendTurn(p1S, p2S, turn);
             sendBoard(p1, p2, p1S, p2S);
             console.log(p1);
@@ -331,7 +324,7 @@ function drawManager(player, round){
         numEl = 5;
     }
     player.drawElement(numEl);
-    player.drawSpell(1);
+    return player.drawSpell(1);
 }
 
 function successTurn(playerSocket){
@@ -374,13 +367,22 @@ function cleanup(players, sockets){
     }
 }
 
+function endGame(p1S, p2S){
+    p1S.disconnect();
+    p2S.disconnect();
+    cleanup(players, sockets);
+    console.log('game finished');
+    gameRunning = false;
+    return;
+}
+
 function checkWin(p1, p2, p1S, p2S){
-    if (p1['health'] <= 0 || (p1.deck_spell.length) == 0){
+    if (p1['health'] <= 0){
         p1S.emit('winner', {winner: 2})
         p2S.emit('winner', {winner: 2})
         return 1;
     }
-    if (p2['health'] <= 0 || (p2.deck_spell.length) == 0){
+    if (p2['health'] <= 0){
         p1S.emit('winner', {winner: 1})
         p2S.emit('winner', {winner: 1})
         return 1;
@@ -388,18 +390,9 @@ function checkWin(p1, p2, p1S, p2S){
     return 0;
 }
 
-function checkOverDraw(p1,p2,p1S,p2S){
-    if ((p1.deck_spell.length) == 0){
-        p1S.emit('winner', {winner: 2})
-        p2S.emit('winner', {winner: 2})
-        return 1;
-    }
-    if ((p2.deck_spell.length) == 0){
-        p1S.emit('winner', {winner: 1})
-        p2S.emit('winner', {winner: 1})
-        return 1;
-    }
-    return 0;
+function overDraw(p1S, p2S, winnerNum){
+    p1S.emit('winner', {winner: winnerNum})
+    p2S.emit('winner', {winner: winnerNum})
 }
 
 function shuffle(array) {
