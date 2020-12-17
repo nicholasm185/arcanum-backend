@@ -61,7 +61,7 @@ module.exports = class Player{
         var damageDone = 0;
         damage = ((this.slow > 0) ? (damage *= 1.5): damage)
         if (damage < 0){
-            this.doRegen(damage);
+            this.doRegen(damage * -1);
         }else if(damage <= this.armor){
             this.armor -= damage;
         }else if(damage > this.armor){
