@@ -40,9 +40,15 @@ module.exports = class Player{
                 this.lifesteal += card.lifesteal;
                 if (card.burn < 0){
                     this.burn += card.burn;
+                    if (this.burn < 0){
+                        this.burn = 0;
+                    }
                 }
                 if (card.slow < 0){
                     this.slow += card.burn;
+                    if (this.slow < 0){
+                        this.slow = 0;
+                    }
                 }
                 return true;
         }else{
@@ -105,6 +111,10 @@ module.exports = class Player{
     }
 
     drawElement(n){
+        var totEl = 10 - (this.earth + this.fire + this.water);
+        if (n > totEl){
+            n = totEl;
+        }
         if(this.cur_deck_element.length < n){
             this.cur_deck_element = this.cur_deck_element = JSON.parse(JSON.stringify(this.deck_element));
         }
