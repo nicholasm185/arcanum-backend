@@ -380,7 +380,21 @@ function checkWin(p1, p2, p1S, p2S){
         p2S.emit('winner', {winner: 2})
         return 1;
     }
-    if (p2['health'] <= 0 || (p1.deck_spell.length) == 0){
+    if (p2['health'] <= 0 || (p2.deck_spell.length) == 0){
+        p1S.emit('winner', {winner: 1})
+        p2S.emit('winner', {winner: 1})
+        return 1;
+    }
+    return 0;
+}
+
+function checkOverDraw(p1,p2,p1S,p2S){
+    if ((p1.deck_spell.length) == 0){
+        p1S.emit('winner', {winner: 2})
+        p2S.emit('winner', {winner: 2})
+        return 1;
+    }
+    if ((p2.deck_spell.length) == 0){
         p1S.emit('winner', {winner: 1})
         p2S.emit('winner', {winner: 1})
         return 1;
