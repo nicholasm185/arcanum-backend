@@ -177,6 +177,7 @@ function mainGameLoop(players, sockets){
                     p1.hand.splice(cardIndex, 1);
                     p1.doLifesteal(p2.applyCard(card));
                     successTurn(p1S);
+                    p2S.emit('lastCard', {carNo: e.carNo})
                     sendBoard(p1, p2, p1S, p2S);
                     if(checkWin(p1, p2, p1S, p2S)){
                         p1S.disconnect();
@@ -212,6 +213,7 @@ function mainGameLoop(players, sockets){
                     p2.hand.splice(cardIndex, 1);
                     p2.doLifesteal(p1.applyCard(card));
                     successTurn(p2S);
+                    p1S.emit('lastCard', {carNo: e.carNo})
                     sendBoard(p1, p2, p1S, p2S);
                     if(checkWin(p1, p2, p1S, p2S)){
                         p1S.disconnect();
