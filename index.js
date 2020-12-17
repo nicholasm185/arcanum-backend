@@ -246,7 +246,6 @@ function mainGameLoop(players, sockets){
                 endGame(p1S, p2S);
                 return;
             }
-            drawManager(p2, round);
             sendTurn(p1S, p2S, turn);
             sendBoard(p1, p2, p1S, p2S);
             console.log(p1);
