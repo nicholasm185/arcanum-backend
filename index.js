@@ -95,15 +95,15 @@ function mainGameLoop(players, sockets){
 
     // Generate Hand
     if(turn == 1){
-        p1.drawSpell(3);
-        p2.drawSpell(3);
-        p1.drawElement(2);
+        p1.drawSpell(4);
+        p2.drawSpell(4);
+        p1.drawElement(1);
         p2.drawElement(2);
     }else{
-        p1.drawSpell(3);
-        p2.drawSpell(3);
+        p1.drawSpell(4);
+        p2.drawSpell(4);
         p1.drawElement(2)
-        p2.drawElement(2);
+        p2.drawElement(1);
     }
 
     p1.deck_spell = [1]
@@ -248,9 +248,6 @@ function mainGameLoop(players, sockets){
             turn = 2;
             turnNum ++;
             round = Math.ceil(turnNum/2);
-            drawManager(p2, round);
-            sendTurn(p1S, p2S, turn);
-            sendBoard(p1, p2, p1S, p2S);
             if(checkWin(p1, p2, p1S, p2S)){
                 p1S.disconnect();
                 p2S.disconnect();
@@ -259,6 +256,9 @@ function mainGameLoop(players, sockets){
                 gameRunning = false;
                 return;
             }
+            drawManager(p2, round);
+            sendTurn(p1S, p2S, turn);
+            sendBoard(p1, p2, p1S, p2S);
             console.log(p1);
             console.log(p2);
         }else{
@@ -273,9 +273,6 @@ function mainGameLoop(players, sockets){
             turn = 1;
             turnNum ++;
             round = Math.ceil(turnNum/2);
-            drawManager(p1, round);
-            sendTurn(p1S, p2S, turn);
-            sendBoard(p1, p2, p1S, p2S);
             if(checkWin(p1, p2, p1S, p2S)){
                 p1S.disconnect();
                 p2S.disconnect();
@@ -284,6 +281,9 @@ function mainGameLoop(players, sockets){
                 gameRunning = false;
                 return;
             }
+            drawManager(p1, round);
+            sendTurn(p1S, p2S, turn);
+            sendBoard(p1, p2, p1S, p2S);
             console.log(p1);
             console.log(p2);
         }else{
@@ -331,14 +331,6 @@ function drawManager(player, round){
         numEl = 5;
     }
     player.drawElement(numEl);
-    if(checkWin(p1, p2, p1S, p2S)){
-        p1S.disconnect();
-        p2S.disconnect();
-        cleanup(players, sockets);
-        console.log('game finished');
-        gameRunning = false;
-        return;
-    }
     player.drawSpell(1);
 }
 
