@@ -16,6 +16,7 @@ module.exports = class Player{
         this.slow = 0;
         this.armor = 0;
         this.lifesteal = 0;
+        this.cur_deck_element = JSON.parse(JSON.stringify(this.deck_element));
     }
 
     applyCard(card){
@@ -94,8 +95,11 @@ module.exports = class Player{
     }
 
     drawElement(n){
+        if(this.cur_deck_element.length < n){
+            this.cur_deck_element = this.cur_deck_element = JSON.parse(JSON.stringify(this.deck_element));
+        }
         for(var i = 0; i < n; i++){
-            const drawn = this.deck_element.pop()
+            const drawn = this.cur_deck_element.pop()
             switch (drawn) {
                 case 1:
                     this.earth ++;

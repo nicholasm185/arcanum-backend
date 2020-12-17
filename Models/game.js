@@ -53,6 +53,10 @@ var subSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    cur_deck_element:{
+        type: [String],
+        default: []
+    }
 });
 
 var schema = new mongoose.Schema({
