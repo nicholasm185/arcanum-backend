@@ -331,7 +331,6 @@ function drawManager(player, round){
         numEl = 5;
     }
     player.drawElement(numEl);
-    player.drawSpell(1);
     if(checkWin(p1, p2, p1S, p2S)){
         p1S.disconnect();
         p2S.disconnect();
@@ -340,6 +339,7 @@ function drawManager(player, round){
         gameRunning = false;
         return;
     }
+    player.drawSpell(1);
 }
 
 function successTurn(playerSocket){
