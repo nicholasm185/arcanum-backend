@@ -11,7 +11,7 @@ var subSchema = new mongoose.Schema({
     health:{
         type: Number,
         required: true,
-        default: 30
+        default: 20
     },
     earth:{
         type: Number,
