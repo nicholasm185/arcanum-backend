@@ -103,7 +103,7 @@ function mainGameLoop(players, sockets){
         p1.drawSpell(3);
         p2.drawSpell(3);
         p1.drawElement(2)
-        p1.drawElement(2);
+        p2.drawElement(2);
     }
 
     // tell the current turn to all players
