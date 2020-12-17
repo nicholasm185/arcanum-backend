@@ -100,14 +100,21 @@ module.exports = class Player{
     }
 
     drawSpell(n){
+        if(this.deck_spell.length == 0){
+            return false;
+        }else if(this.deck_spell.length < n){
+            n = this.deck_spell.length;
+        }
         for(var i = 0; i < n; i++){
             if(this.hand.length < MAX_HAND){
                 var spell = this.deck_spell.pop()
                 this.hand.push(spell);
+                return true;
             }
             else{
                 var spell = null;
                 this.deck_spell.pop();
+                return true;
             }
         };
     }
