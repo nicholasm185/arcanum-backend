@@ -17,14 +17,17 @@ async function createGame(p1, p2, gamestate, cur_turn, playerOrder){
     return result;
 };
 
-async function updateGameTurn(gameID, curTurn){
+async function updateGameTurn(gameID, p1, p2, turn, turnNum, round){
     const result = await Game.findOne({_id:gameID});
     if(result == null){
         console.log("error, game not found")
     }
     else{
-        // console.log(result);
-        result.cur_turn = curTurn;
+        result.p1 = p1;
+        result.p2 = p2;
+        result.cur_turn = turn;
+        result.totalTurn = turnNum;
+        result.round = round;
         await result.save();
         return result;
     }

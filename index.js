@@ -73,6 +73,7 @@ function mainGameLoop(players, sockets){
     var turn = Math.round(Math.random()) + 1;
     var turnNum = 0;
     var round = 1;
+    var gameID;
     console.log("Game commencing; get ready!");
 
     // get player objects from players
@@ -115,6 +116,8 @@ function mainGameLoop(players, sockets){
 
     dbFunc.createGame(p1, p2, true, turn, ((turn == 1) ? [1,2] : [2,1])).then(function(result){
         console.log(result);
+        gameID = result['_id'];
+        console.log(gameID);
     });
 
     // test function for both players
@@ -248,6 +251,11 @@ function mainGameLoop(players, sockets){
             }
             sendTurn(p1S, p2S, turn);
             sendBoard(p1, p2, p1S, p2S);
+            dbFunc.updateGameTurn(gameID, p1, p2, turn, turnNum, round).then(function(result){
+                console.log('db update successful');
+            }).catch(function(err){
+                console.log('error updating db');
+            });
             console.log(p1);
             console.log(p2);
         }else{
@@ -273,6 +281,11 @@ function mainGameLoop(players, sockets){
             }
             sendTurn(p1S, p2S, turn);
             sendBoard(p1, p2, p1S, p2S);
+            dbFunc.updateGameTurn(gameID, p1, p2, turn, turnNum, round).then(function(result){
+                console.log('db update successful');
+            }).catch(function(err){
+                console.log('error updating db');
+            });
             console.log(p1);
             console.log(p2);
         }else{
