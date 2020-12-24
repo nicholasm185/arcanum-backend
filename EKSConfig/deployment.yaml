@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arcanum-deployment
+  labels:
+    app: arcanum
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: arcanum
+  template:
+    metadata:
+      labels:
+        app: arcanum
+    spec:
+      containers:
+      - name: arcanum-backend
+        image: nicholasm185/game-server:latest
+        ports:
+        - containerPort: 8080
