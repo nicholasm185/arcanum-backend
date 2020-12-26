@@ -48,7 +48,9 @@ io.on('connection', function(socket) {
             if(Object.keys(players).length == 2 && !gameRunning){
                 console.log("game ready to start");
                 gameRunning = true;
-                mainGameLoop(players, sockets);
+                temp_players = players.splice(0,2);
+                temp_sockets = sockets.splice(0,2);
+                mainGameLoop(temp_players, temp_sockets);
             };
         })
 
