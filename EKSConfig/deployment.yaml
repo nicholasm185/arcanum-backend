@@ -17,6 +17,7 @@ spec:
       containers:
       - name: arcanum-backend
         image: nicholasm185/game-server:cloud-native
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
         env:
