@@ -57,7 +57,7 @@ function mainLoop(){
                     var newgame = new GameRoom(players[lastJoined],players[thisPlayerID],sockets[lastJoined],sockets[thisPlayerID], gameID);
                     games[gameID] = newgame;
                     console.log(games[gameID]);
-                    mainGameLoop(games[gameID]);
+                    mainGameLoop(games[gameID], games);
                     // delete players[thisPlayerID];
                     // delete sockets[thisPlayerID];
                     // delete players[lastJoined];
@@ -86,7 +86,7 @@ function mainLoop(){
 }
 
 // *****************************main loop of the game**************************** 
-function mainGameLoop(game){
+function mainGameLoop(game, games){
     // get randomized game.turn
     game.turn = Math.round(Math.random()) + 1;
     game.turnNum = 0;
@@ -129,54 +129,6 @@ function mainGameLoop(game){
         console.log(game.gameID);
     });
 
-    // test function for both players
-    game.p1S.on('yeet', function(e){
-        if(game.turn == 1){
-            console.log("player 1 yeeted " + e.yeet);
-            game.turn = 2;
-            game.turnNum ++;
-            game.p2.doDamage(1);
-            sendTurn(game.p1S, game.p2S, game.turn);
-            sendBoard(game.p1, game.p2, game.p1S, game.p2S);
-            if(checkWin(game.p1, game.p2, game.p1S, game.p2S)){
-                game.p1S.disconnect();
-                game.p2S.disconnect();
-                cleanup(players, sockets, game.gameID, games);
-                console.log('game finished');
-                gameRunning = false;
-                return;
-            }
-
-        }
-        else{
-            console.log('game.p1 tried to yeet when its not their game.turn');
-            sendTurnWarning(game.p1S, "its not your game.turn");
-        }
-    });
-
-    game.p2S.on('yeet', function(e){
-        if(game.turn == 2){
-            console.log("player 2 yeeted "+ e.yeet);
-            game.turn = 1;
-            game.turnNum ++;
-            game.p1.doDamage(1);
-            sendTurn(game.p1S, game.p2S, game.turn);
-            sendBoard(game.p1, game.p2, game.p1S, game.p2S);
-            if(checkWin(game.p1, game.p2, game.p1S, game.p2S)){
-                game.p1S.disconnect();
-                game.p2S.disconnect();
-                cleanup(players, sockets, game.gameID, games);
-                console.log('game finished');
-                gameRunning = false;
-                return;
-            }
-        }
-        else{
-            console.log('game.p2 tried to yeet when its not their game.turn');
-            sendTurnWarning(game.p2S, "its not your game.turn");
-        }
-    });
-
     // play card event
     game.p1S.on('playCard', function(e){
         if(game.turn == 1){
@@ -191,8 +143,14 @@ function mainGameLoop(game){
                     successTurn(game.p1S);
                     game.p2S.emit('lastCard', {cardNo: e.cardNo})
                     sendBoard(game.p1, game.p2, game.p1S, game.p2S);
-                    if(checkWin(game.p1, game.p2, game.p1S, game.p2S)){
-                        endGame(game.p1S, game.p2S);
+                    winCheck = checkWin(game.p1, game.p2, game.p1S, game.p2S)
+                    if(winCheck){
+                        endGame(game.p1S, game.p2S, game.gameID, games);
+                        dbFunc.updateGameWinner(game.gameID, game.p1, game.p2, game.turn, game.turnNum, game.round, winCheck).then(function(result){
+                            console.log('db update successful');
+                        }).catch(function(err){
+                            console.log('error updating db');
+                        })
                         return;
                     }
                 }else{
@@ -223,8 +181,14 @@ function mainGameLoop(game){
                     successTurn(game.p2S);
                     game.p1S.emit('lastCard', {cardNo: e.cardNo})
                     sendBoard(game.p1, game.p2, game.p1S, game.p2S);
-                    if(checkWin(game.p1, game.p2, game.p1S, game.p2S)){
-                        endGame(game.p1S, game.p2S);
+                    winCheck = checkWin(game.p1, game.p2, game.p1S, game.p2S)
+                    if(winCheck){
+                        endGame(game.p1S, game.p2S, game.gameID, games);
+                        dbFunc.updateGameWinner(game.gameID, game.p1, game.p2, game.turn, game.turnNum, game.round, winCheck).then(function(result){
+                            console.log('db update successful');
+                        }).catch(function(err){
+                            console.log('error updating db');
+                        })
                         return;
                     }
                 }else{
@@ -249,13 +213,24 @@ function mainGameLoop(game){
             game.turn = 2;
             game.turnNum ++;
             game.round = Math.ceil(game.turnNum/2);
-            if(checkWin(game.p1, game.p2, game.p1S, game.p2S)){
-                endGame(game.p1S, game.p2S);
+            winCheck = checkWin(game.p1, game.p2, game.p1S, game.p2S)
+            if(winCheck){
+                endGame(game.p1S, game.p2S, game.gameID, games);
+                dbFunc.updateGameWinner(game.gameID, game.p1, game.p2, game.turn, game.turnNum, game.round, winCheck).then(function(result){
+                    console.log('db update successful');
+                }).catch(function(err){
+                    console.log('error updating db');
+                })
                 return;
             }
             if(!drawManager(game.p2, game.round)){
                 overDraw(game.p1S, game.p2S, 1);
-                endGame(game.p1S, game.p2S);
+                endGame(game.p1S, game.p2S, game.gameID, games);
+                dbFunc.updateGameWinner(game.gameID, game.p1, game.p2, game.turn, game.turnNum, game.round, 1).then(function(result){
+                    console.log('db update successful');
+                }).catch(function(err){
+                    console.log('error updating db');
+                })
                 return;
             }
             sendTurn(game.p1S, game.p2S, game.turn);
@@ -279,13 +254,24 @@ function mainGameLoop(game){
             game.turn = 1;
             game.turnNum ++;
             game.round = Math.ceil(game.turnNum/2);
-            if(checkWin(game.p1, game.p2, game.p1S, game.p2S)){
-                endGame(game.p1S, game.p2S);
+            winCheck = checkWin(game.p1, game.p2, game.p1S, game.p2S)
+            if(winCheck){
+                endGame(game.p1S, game.p2S, game.gameID, games);
+                dbFunc.updateGameWinner(game.gameID, game.p1, game.p2, game.turn, game.turnNum, game.round, winCheck).then(function(result){
+                    console.log('db update successful');
+                }).catch(function(err){
+                    console.log('error updating db');
+                })
                 return;
             }
             if(!drawManager(game.p1, game.round)){
                 overDraw(game.p1S, game.p2S, 2);
-                endGame(game.p1S, game.p2S);
+                endGame(game.p1S, game.p2S, game.gameID, games);
+                dbFunc.updateGameWinner(game.gameID, game.p1, game.p2, game.turn, game.turnNum, game.round, 2).then(function(result){
+                    console.log('db update successful');
+                }).catch(function(err){
+                    console.log('error updating db');
+                })
                 return;
             }
             sendTurn(game.p1S, game.p2S, game.turn);
@@ -397,7 +383,7 @@ function checkWin(p1, p2, p1S, p2S){
     if (p1['health'] <= 0){
         p1S.emit('winner', {winner: 2})
         p2S.emit('winner', {winner: 2})
-        return 1;
+        return 2;
     }
     if (p2['health'] <= 0){
         p1S.emit('winner', {winner: 1})

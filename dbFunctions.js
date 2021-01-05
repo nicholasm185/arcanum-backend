@@ -33,6 +33,24 @@ async function updateGameTurn(gameID, p1, p2, turn, turnNum, round){
     }
 }
 
+async function updateGameWinner(gameID, p1, p2, turn, turnNum, round, winner){
+    const result = await Game.findOne({_id:gameID});
+    if(result == null){
+        console.log("error, game not found")
+    }
+    else{
+        result.p1 = p1;
+        result.p2 = p2;
+        result.cur_turn = turn;
+        result.totalTurn = turnNum;
+        result.round = round;
+        result.gamestate = false;
+        result.winner = winner;
+        await result.save();
+        return result;
+    }
+}
+
 async function getGame(gameID){
     const result = await Game.findOne({_id: gameID});
     if(result == null){
@@ -68,3 +86,4 @@ exports.getGame = getGame;
 exports.updateGameTurn = updateGameTurn;
 exports.createPlayer = createPlayer;
 exports.getCards = getCards;
+exports.updateGameWinner = updateGameWinner;
