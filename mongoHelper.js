@@ -1,25 +1,30 @@
 var mongoose = require('mongoose');
 
-// var URL = "mongodb+srv://root:DeeZnkKwn03Z3qhb@cluster0.rbt3t.mongodb.net/arcanum?retryWrites=true&w=majority";
+var URL = "mongodb+srv://root:DeeZnkKwn03Z3qhb@cluster0.rbt3t.mongodb.net/arcanum?retryWrites=true&w=majority";
 
-var URL = process.env.MONGO_URL
-var username = process.env.MONGO_USERNAME
-var pass = process.env.MONGO_PASS
-var db = process.env.MONGO_DB_NAME
+// var URL = process.env.MONGO_URL
+// var username = process.env.MONGO_USERNAME
+// var pass = process.env.MONGO_PASS
+// var db = process.env.MONGO_DB_NAME
 
-console.log("mongodb://"+URL+":27017/"+db);
+// console.log("mongodb://"+URL+":27017/"+db);
 
 mongoose.set('useCreateIndex', true);
 mongoose.set('useFindAndModify', false);
 
-mongoose.connect("mongodb://"+URL+":27017/"+db, {
+// mongoose.connect("mongodb://"+URL+":27017/"+db, {
+//     useNewUrlParser: true,
+//     useCreateIndex: true,
+//     "auth": {
+//         "authSource": "admin"
+//     },
+//     "user": username,
+//     "pass": pass
+// });
+
+mongoose.connect(URL, {
     useNewUrlParser: true,
-    useCreateIndex: true,
-    "auth": {
-        "authSource": "admin"
-    },
-    "user": username,
-    "pass": pass
+    useCreateIndex: true
 });
 
 var db = mongoose.connection;
