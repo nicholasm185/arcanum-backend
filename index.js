@@ -88,7 +88,8 @@ function mainLoop(){
 // *****************************main loop of the game**************************** 
 function mainGameLoop(game, games){
     // get randomized game.turn
-    game.turn = Math.round(Math.random()) + 1;
+    // game.turn = Math.round(Math.random()) + 1;
+    game.turn = 1;
     game.turnNum = 0;
     game.round = 1;
     console.log("Game commencing; get ready!");
@@ -131,7 +132,7 @@ function mainGameLoop(game, games){
 
     // play card event
     game.p1S.on('playCard', function(e){
-        if(game.turn == 1 && e.playerID === game.p1.playerID){
+        if(game.turn == 1 && e.playerID == game.p1.playerID){
             if(game.p1.hand.includes(parseInt(e.cardNo))){
                 const card = cards.find(card => card.cardNo === parseInt(e.cardNo));
                 if(game.p1.playCard(card)){
@@ -169,7 +170,7 @@ function mainGameLoop(game, games){
     });
 
     game.p2S.on('playCard', function(e){
-        if(game.turn == 2 && e.playerID === game.p2.playerID){
+        if(game.turn == 2 && e.playerID == game.p2.playerID){
             if(game.p2.hand.includes(parseInt(e.cardNo))){
                 const card = cards.find(card => card.cardNo === parseInt(e.cardNo));
                 if(game.p2.playCard(card)){
@@ -207,7 +208,7 @@ function mainGameLoop(game, games){
 
     // end game.turn event
     game.p1S.on('endTurn', function(e){
-        if(game.turn == 1 && e.playerID === game.p1.playerID){
+        if(game.turn == 1 && e.playerID == game.p1.playerID){
             console.log('ending game.p1 game.turn');
             game.p1.turnEnd();
             game.turn = 2;
@@ -248,7 +249,7 @@ function mainGameLoop(game, games){
     });
 
     game.p2S.on('endTurn', function(e){
-        if(game.turn == 2 && e.playerID === game.p2.playerID){
+        if(game.turn == 2 && e.playerID == game.p2.playerID){
             console.log('ending game.p2 game.turn');
             game.p2.turnEnd();
             game.turn = 1;
