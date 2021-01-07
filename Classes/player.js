@@ -74,8 +74,8 @@ module.exports = class Player{
     }
 
     doRegen(regen){
-        if(this.health + regen >= 30){
-            this.health = 30;
+        if(this.health + regen >= 25){
+            this.health = 25;
         }else{
             this.health += regen;
         }
