@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arcanum-deployment
+  labels:
+    app: arcanum
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: arcanum
+  template:
+    metadata:
+      labels:
+        app: arcanum
+    spec:
+      containers:
+      - name: arcanum-backend
+        image: nicholasm185/game-server:cloud-native
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: MONGO_URL
+          valueFrom:
+            configMapKeyRef:
+              name: mongodb-configmap
+              key: database_url
+        - name: MONGO_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: mongo-root-username
+        - name: MONGO_PASS
+          valueFrom:
+              secretKeyRef:
+                name: mongodb-secret
+                key: mongo-root-password
+        - name: MONGO_DB_NAME
+          value: arcanum
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: arcanum-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: arcanum
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30001
